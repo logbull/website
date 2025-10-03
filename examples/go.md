@@ -1,13 +1,44 @@
----
-title: Go Integration - Log Bull Documentation
-description: Learn how to integrate Log Bull with Go applications using slog, zap, or logrus. Multiple integration options for Go logging.
----
+# LogBull Go
 
-# Go
+<div align="center">
+<img src="assets/logo.svg" style="margin-bottom: 20px;" alt="Log Bull Logo" width="250"/>
 
-LogBull Go library provides multiple integration options for sending logs to your LogBull server.
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Go Version](https://img.shields.io/badge/go-1.21+-blue.svg)](https://golang.org/dl/)
 
-**GitHub Repository:** [logbull-go](https://github.com/logbull/logbull-go)
+A Go library for sending logs to [LogBull](https://github.com/logbull/logbull) - a self-hosted log collection system.
+
+</div>
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Usage Examples](#usage-examples)
+  - [1. Standalone LogBullLogger](#1-standalone-logbulllogger)
+  - [2. Standard Library slog Integration](#2-standard-library-slog-integration)
+  - [3. Uber-go Zap Integration](#3-uber-go-zap-integration)
+  - [4. Sirupsen Logrus Integration](#4-sirupsen-logrus-integration)
+- [Configuration Options](#configuration-options)
+  - [Config Parameters](#config-parameters)
+  - [Available Log Levels](#available-log-levels)
+- [API Reference](#api-reference)
+  - [LogBullLogger Methods](#logbulllogger-methods)
+  - [Import Structure](#import-structure)
+- [Error Handling](#error-handling)
+- [Performance Considerations](#performance-considerations)
+- [Thread Safety](#thread-safety)
+- [Requirements](#requirements)
+- [License](#license)
+- [Contributing](#contributing)
+- [LogBull Server](#logbull-server)
+
+## Features
+
+- **Multiple integration options**: Standalone logger, `slog` handler, `zap` core, and `logrus` hook
+- **Context support**: Attach persistent context to logs (session_id, user_id, etc.)
+- **Thread-safe**: All operations are safe for concurrent use
 
 ## Installation
 
@@ -15,7 +46,7 @@ LogBull Go library provides multiple integration options for sending logs to you
 go get github.com/logbull/logbull-go
 ```
 
-## Quick start
+## Quick Start
 
 The fastest way to start using LogBull is with the standalone logger:
 
@@ -46,7 +77,7 @@ func main() {
 }
 ```
 
-## Usage examples
+## Usage Examples
 
 ### 1. Standalone LogBullLogger
 
@@ -99,7 +130,7 @@ func main() {
 }
 ```
 
-#### Context management
+#### Context Management
 
 ```go
 // Attach persistent context to all subsequent logs
@@ -134,7 +165,7 @@ transactionLogger.Info("Transaction completed", map[string]any{
 // Includes all previous context + new transaction context
 ```
 
-### 2. Standard library slog integration
+### 2. Standard Library slog Integration
 
 ```go
 package main
@@ -177,7 +208,7 @@ func main() {
 }
 ```
 
-### 3. Uber-go zap integration
+### 3. Uber-go Zap Integration
 
 ```go
 package main
@@ -219,7 +250,7 @@ func main() {
 }
 ```
 
-### 4. Sirupsen Logrus integration
+### 4. Sirupsen Logrus Integration
 
 ```go
 package main
@@ -261,16 +292,16 @@ func main() {
 }
 ```
 
-## Configuration options
+## Configuration Options
 
-### Config parameters
+### Config Parameters
 
 - `ProjectID` (required): Your LogBull project ID (UUID format)
 - `Host` (required): LogBull server URL (e.g., `http://localhost:4005`)
 - `APIKey` (optional): API key for authentication
 - `LogLevel` (optional): Minimum log level to process (default: `INFO`)
 
-### Available log levels
+### Available Log Levels
 
 - `DEBUG`: Detailed information for debugging
 - `INFO`: General information messages
@@ -278,8 +309,32 @@ func main() {
 - `ERROR`: Error messages
 - `CRITICAL`: Critical error messages
 
-## Features
+## API Reference
 
-- **Multiple integration options**: Standalone logger, `slog` handler, `zap` core, and `logrus` hook
-- **Context support**: Attach persistent context to logs (session_id, user_id, etc.)
-- **Thread-safe**: All operations are safe for concurrent use
+### LogBullLogger Methods
+
+- `Debug(message string, fields map[string]any)`: Log debug message
+- `Info(message string, fields map[string]any)`: Log info message
+- `Warning(message string, fields map[string]any)`: Log warning message
+- `Error(message string, fields map[string]any)`: Log error message
+- `Critical(message string, fields map[string]any)`: Log critical message
+- `WithContext(context map[string]any) *LogBullLogger`: Create new logger with additional context
+- `Flush()`: Immediately send all queued logs
+- `Shutdown()`: Stop background processing and send remaining logs
+
+### Import Structure
+
+```go
+// Main imports
+import "github.com/logbull/logbull-go/logbull"
+
+// Use the exported types and functions
+logger, _ := logbull.NewLogger(logbull.Config{...})
+handler, _ := logbull.NewSlogHandler(logbull.Config{...})
+core, _ := logbull.NewZapCore(logbull.Config{...})
+hook, _ := logbull.NewLogrusHook(logbull.Config{...})
+```
+
+## License
+
+Apache 2.0 License

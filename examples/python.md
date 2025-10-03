@@ -1,13 +1,44 @@
----
-title: Python Integration - Log Bull Documentation
-description: Learn how to integrate Log Bull with Python applications using LogBullLogger. Multiple integration options including Python logging, Loguru, and Structlog.
----
+# LogBull Python
 
-# Python
+<div align="center">
+<img src="assets/logo.svg" style="margin-bottom: 20px;" alt="Log Bull Logo" width="250"/>
 
-LogBull Python library provides multiple integration options for sending logs to your LogBull server.
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![PyPI](https://img.shields.io/pypi/v/logbull.svg)](https://pypi.org/project/logbull/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-**GitHub Repository:** [logbull-python](https://github.com/logbull/logbull-python)
+A Python library for sending logs to [LogBull](https://github.com/logbull/logbull) - a self-hosted log collection system.
+</div>
+
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Usage Examples](#usage-examples)
+  - [1. Standalone LogBullLogger](#1-standalone-logbulllogger)
+  - [2. Python Logging Handler](#2-python-logging-handler)
+  - [3. Loguru Integration](#3-loguru-integration)
+  - [4. Structlog Integration](#4-structlog-integration)
+- [Configuration Options](#configuration-options)
+  - [LogBullLogger Parameters](#logbulllogger-parameters)
+  - [Available Log Levels](#available-log-levels)
+- [API Reference](#api-reference)
+  - [LogBullLogger Methods](#logbulllogger-methods)
+  - [Import Structure](#import-structure)
+- [Requirements](#requirements)
+- [License](#license)
+- [Contributing](#contributing)
+- [LogBull Server](#logbull-server)
+
+## Features
+
+- **Multiple integration options**: Standalone logger, Python logging handler, Loguru sink, and Structlog processor
+- **Context support**: Attach persistent context to logs (session_id, user_id, etc.)
+- **Type safety**: Full type annotations for better developer experience
+- **Zero dependencies**: No third-party dependencies required
 
 ## Installation
 
@@ -257,9 +288,21 @@ from logbull.handlers import LoguruSink, StructlogProcessor
 from logbull.core.types import LogLevel, LogFields
 ```
 
-## Features
+## Requirements
 
-- **Multiple integration options**: Standalone logger, Python logging handler, Loguru sink, and Structlog processor
-- **Context support**: Attach persistent context to logs (session_id, user_id, etc.)
-- **Type safety**: Full type annotations for better developer experience
-- **Zero dependencies**: No third-party dependencies required
+- Python 3.8+
+- No external dependencies required
+- Optional: `loguru` for Loguru integration
+- Optional: `structlog` for Structlog integration
+
+## License
+
+Apache 2.0 License
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## LogBull Server
+
+This library requires a LogBull server instance. Visit [LogBull on GitHub](https://github.com/logbull/logbull) for server setup instructions.

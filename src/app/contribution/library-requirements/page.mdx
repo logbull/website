@@ -19,12 +19,12 @@ The main priority of the library - is to be simple for use (with minimalistic in
 
 All library implementations must support these configuration parameters:
 
-### Required Parameters
+### Required parameters
 
 - `project_id` (string, UUID format) - Target project identifier
 - `host` (string, URL) - LogBull server endpoint (e.g., `http://localhost:4005`)
 
-### Optional Parameters
+### Optional parameters
 
 - `api_key` (string) - API key for authentication (if server requires it)
 - `log_level` (string) - Minimum log level to process (default: INFO)
@@ -36,7 +36,7 @@ All library implementations must support these configuration parameters:
 
 ## Log Entry Format
 
-### Standard Log Structure
+### Standard log structure
 
 ```json
 {
@@ -51,20 +51,20 @@ All library implementations must support these configuration parameters:
 }
 ```
 
-### Field Requirements
+### Field requirements
 
 - **level**: Uppercase string (DEBUG, INFO, WARNING, ERROR, CRITICAL)
 - **message**: Non-empty string, max 10,000 characters
 - **timestamp**: RFC3339Nano format with nanosecond precision, must be unique and increasing to ensure correct order of logs
 - **fields**: Object/map with custom key-value pairs (max 100 fields)
 
-### Field Constraints
+### Field constraints
 
 - Field keys: Max 100 characters, must be non-empty strings
 - Field values: Must be JSON-serializable (convert non-serializable values to strings)
 - Total fields: Maximum 100 per log entry
 
-## HTTP API Integration
+## HTTP API integration
 
 ### Endpoint
 
@@ -72,7 +72,7 @@ All library implementations must support these configuration parameters:
 POST {host}/api/v1/logs/receiving/{project_id}
 ```
 
-### Request Headers
+### Request headers
 
 ```
 Content-Type: application/json
@@ -80,7 +80,7 @@ User-Agent: LogBull-{Language}-Client/{Version}
 X-API-Key: {api_key}  # Optional, if configured
 ```
 
-### Request Body
+### Request body
 
 ```json
 {
@@ -95,7 +95,7 @@ X-API-Key: {api_key}  # Optional, if configured
 }
 ```
 
-### Response Format
+### Response format
 
 ```json
 {
@@ -118,7 +118,7 @@ X-API-Key: {api_key}  # Optional, if configured
   - `index` (integer): Index of the rejected log in the batch (0-based)
   - `message` (string): Reason for rejection
 
-### Error Handling
+### Error handling
 
 - HTTP errors: Log error message, log sending entry to stderr/console, mark batch as failed
 - Server errors (5xx) or network errors: Consider retry with exponential backoff (max 3 tries), print error message to stderr/console
@@ -128,23 +128,23 @@ X-API-Key: {api_key}  # Optional, if configured
   - The rejected log's content (level, message, timestamp, fields)
   - The index of the rejected log in the batch
 
-## Core Features
+## Core features
 
-### 1. Asynchronous Log Sending
+### 1. Asynchronous log sending
 
 - Use background thread/goroutine for batch processing
 - Log operations should only add logs to internal queue (immediate return from log methods like `.debug()`, `.info()`, etc.)
 - Internal queue for pending logs
 - Automatic batch sending based on size or time interval
 
-### 2. Batch Processing
+### 2. Batch processing
 
 - Collect logs into batches (up to 1000 logs)
 - Send batches at regular intervals (default: 1 second) even if batch is not full
 - Send immediately when batch reaches size limit
 - Concurrent HTTP requests using thread/connection pool - do not wait until previous request is completed
 
-### 3. Context Management
+### 3. Context management
 
 Context allows attaching persistent fields to all subsequent logs:
 
@@ -161,28 +161,28 @@ request_logger.info("Processing started")  # Includes request_id
 - Share same sender instance (don't create duplicate senders)
 - Context fields should merge/override: child context > parent context
 
-### 4. Timestamp Generation
+### 4. Timestamp generation
 
 - Use nanosecond precision timestamps
 - Ensure monotonic timestamps (each timestamp must be unique and increasing)
 - Format: RFC3339Nano (e.g., `2025-01-15T10:30:45.123456789Z`)
 - Use thread-safe timestamp generation
 
-### 5. Resource Management
+### 5. Resource management
 
 - Auto-register senders for cleanup on application exit
 - Implement `flush()` method to send all pending logs immediately
 - Implement `shutdown()` method to stop processing and cleanup
 - Wait for in-flight requests during shutdown (with timeout)
 
-### 6. Thread/Concurrency Safety
+### 6. Thread/Concurrency safety
 
 - All public methods must be thread-safe
 - Use locks/mutexes for shared state
 - Queue operations must be concurrent-safe
 - Executor/pool management must be thread-safe
 
-### 7. Console Output
+### 7. Console output
 
 Standalone logger should print logs to console in addition to sending them:
 
@@ -202,9 +202,9 @@ Standalone logger should print logs to console in addition to sending them:
 
 Library should not include dependencies on third-party libraries (only for dev and testing, but not for production).
 
-## Integration Patterns (Python example, similar for other languages)
+## Integration patterns (Python example, similar for other languages)
 
-### Standalone Logger Pattern
+### Standalone logger pattern
 
 ```python
 # Initialization
@@ -227,7 +227,7 @@ request_logger.info("Processing")
 logger.shutdown()
 ```
 
-### Standard Library Handler Pattern
+### Standard library handler pattern
 
 ```python
 import logging
@@ -244,7 +244,7 @@ logger.addHandler(handler)
 logger.info("Message", extra={"field": "value"})
 ```
 
-### Third-Party Library Pattern
+### Third-party library pattern
 
 ```python
 from loguru import logger
@@ -258,7 +258,7 @@ logger.add(
 logger.info("Message", user_id=123)
 ```
 
-## Error Handling Philosophy
+## Error handling philosophy
 
 1. **Never break user's application**: Catch all exceptions in log methods
 2. **Fail silently**: Log errors to stderr/console, but don't throw exceptions
@@ -266,7 +266,7 @@ logger.info("Message", user_id=123)
 4. **Validation on init**: Validate configuration at initialization, not at runtime
 5. **Graceful degradation**: If LogBull server is unavailable, continue logging locally
 
-## Testing Requirements
+## Testing requirements
 
 Every library implementation must include:
 
@@ -276,7 +276,7 @@ Every library implementation must include:
 4. **Handler/integration tests** for each supported library
 5. **Configuration validation tests**
 
-## Documentation Requirements
+## Documentation requirements
 
 Each library must include:
 
@@ -300,7 +300,7 @@ Each library must include:
    - Java: Javadoc
    - etc.
 
-## License and Versioning
+## License and versioning
 
 - **License**: Apache 2.0
 - **Versioning**: Semantic versioning (MAJOR.MINOR.PATCH)

@@ -32,7 +32,7 @@ const languageConfigs: Record<Language, LanguageConfig> = {
 logger = LogBullLogger(
     project_id="YOUR_PROJECT_ID",
     host="http://your-logbull-server:4005",
-    api_key="YOUR_API_KEY"  # optional
+    api_key="YOUR_API_KEY"  # optional, if you need it
 )
 
 # Log messages (printed to console AND sent to LogBull)
@@ -65,16 +65,16 @@ logger.setLevel(logging.INFO)
 logbull_handler = LogBullHandler(
     project_id="YOUR_PROJECT_ID",
     host="http://YOUR_LOGBULL_SERVER:4005",
-    api_key="YOUR_API_KEY"  # optional
+    api_key="YOUR_API_KEY"  # optional, if you need it
 )
 logger.addHandler(logbull_handler)
 
 # Use standard logging - logs automatically sent to LogBull
-logger.info("Execution completed", extra={
-    "bot_id": "bot_123",
-    "status": "success"
+logger.info("Execution log: %s", execution_log.text, extra={"bot_id": bot_id})
+logger.warning("Rate limit approaching", extra={
+    "current_requests": 950,
+    "limit": 1000
 })
-
 logger.error("Database error", extra={
     "query": "SELECT * FROM users",
     "error": "Connection timeout"
@@ -91,25 +91,19 @@ logger.add(
     LoguruSink(
         project_id="YOUR_PROJECT_ID",
         host="http://YOUR_LOGBULL_SERVER:4005",
-        api_key="YOUR_API_KEY"  # optional
+        api_key="YOUR_API_KEY"  # optional, if you need it
     ),
     level="INFO",
     format="{time} | {level} | {message}",
-    serialize=True
+    serialize=True  # Captures structured data
 )
 
 # Use Loguru as usual - logs automatically sent to LogBull
-logger.info("User action", 
-    user_id=12345, 
-    action="login", 
-    ip="192.168.1.100"
-)
+logger.info("User action", user_id=12345, action="login", ip="192.168.1.100")
+logger.error("Payment failed", order_id="ord_123", amount=99.99, currency="USD")
 
 # Bind context for multiple logs
-bound_logger = logger.bind(
-    request_id="req_789", 
-    session_id="sess_456"
-)
+bound_logger = logger.bind(request_id="req_789", session_id="sess_456")
 bound_logger.info("Request started")
 bound_logger.info("Request completed", duration_ms=250)`,
       },
@@ -128,11 +122,11 @@ structlog.configure(
         StructlogProcessor(
             project_id="YOUR_PROJECT_ID",
             host="http://YOUR_LOGBULL_SERVER:4005",
-            api_key="YOUR_API_KEY"  # optional
+            api_key="YOUR_API_KEY"  # optional, if you need it
         ),
-        structlog.processors.JSONRenderer(),
+        structlog.processors.JSONRenderer(), # make sure it is the last processor
     ],
-    wrapper_class=structlog.make_filtering_bound_logger(20),
+    wrapper_class=structlog.make_filtering_bound_logger(20),  # INFO level
     logger_factory=structlog.WriteLoggerFactory(),
     cache_logger_on_first_use=True,
 )
@@ -145,6 +139,14 @@ logger.info("API request",
     path="/api/users",
     status_code=201,
     response_time_ms=45
+)
+
+# With bound context
+logger = logger.bind(correlation_id="corr_123", user_id="user_789")
+logger.info("Processing payment", amount=150.00, currency="EUR")
+logger.error("Payment gateway error",
+    error_code="GATEWAY_TIMEOUT",
+    retry_count=3
 )`,
       },
     ],
@@ -158,11 +160,13 @@ logger.info("API request",
         language: 'go',
         code: `package main
 
-import "github.com/logbull/logbull-go/logbull"
+import (
+    "github.com/logbull/logbull-go/logbull"
+)
 
 func main() {
     logger, err := logbull.NewLogger(logbull.Config{
-        ProjectID: "YOUR_PROJECT_ID",
+        ProjectID: "12345678-1234-1234-1234-123456789012",
         Host:      "http://localhost:4005",
         APIKey:    "your-api-key", // optional
         LogLevel:  logbull.INFO,
@@ -177,17 +181,6 @@ func main() {
         "username": "john_doe",
         "ip":       "192.168.1.100",
     })
-
-    // With context
-    sessionLogger := logger.WithContext(map[string]any{
-        "session_id": "sess_abc123",
-        "user_id":    "user_456",
-    })
-
-    sessionLogger.Info("Processing user request", map[string]any{
-        "action": "purchase",
-        "amount": 99.99,
-    })
 }`,
       },
       {
@@ -197,6 +190,8 @@ func main() {
 
 import (
     "log/slog"
+    "time"
+
     "github.com/logbull/logbull-go/logbull"
 )
 
@@ -225,6 +220,9 @@ func main() {
             slog.Int("status", 201),
         ),
     )
+
+    handler.Flush()
+    time.Sleep(2 * time.Second) // wait for logs to be sent
 }`,
       },
       {
@@ -233,7 +231,10 @@ func main() {
         code: `package main
 
 import (
+    "time"
+
     "go.uber.org/zap"
+
     "github.com/logbull/logbull-go/logbull"
 )
 
@@ -262,6 +263,7 @@ func main() {
     )
 
     logger.Sync()
+    time.Sleep(2 * time.Second) // wait for logs to be sent
 }`,
       },
       {
@@ -270,7 +272,10 @@ func main() {
         code: `package main
 
 import (
+    "time"
+
     "github.com/sirupsen/logrus"
+
     "github.com/logbull/logbull-go/logbull"
 )
 
@@ -297,6 +302,9 @@ func main() {
         "order_id": "ord_123",
         "amount":   99.99,
     }).Error("Payment failed")
+
+    hook.Flush()
+    time.Sleep(2 * time.Second) // wait for logs to be sent
 }`,
       },
     ],
