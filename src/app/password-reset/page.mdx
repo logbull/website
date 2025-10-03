@@ -1,0 +1,24 @@
+---
+title: Password Reset - Log Bull Documentation
+description: How to reset admin or user passwords in Log Bull using Docker exec command.
+---
+
+# Password reset
+
+If you need to reset the admin password or password of any other user, you can use the built-in password reset command:
+
+```bash
+docker exec -it logbull ./main --new-password="YourNewSecurePassword123" --email="admin"
+```
+
+Replace `admin@example.com` with the actual email address of the user whose password you want to reset.
+
+## Resetting Admin Password
+
+If you need to reset the admin password, you can use the built-in password reset command:
+
+```bash
+docker exec -it logbull ./main --new-password="YourNewSecurePassword123" --email="admin"
+```
+
+Replace `admin@example.com` with the actual email address of the user whose password you want to reset.

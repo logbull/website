@@ -1,0 +1,103 @@
+---
+title: Installation - Log Bull Documentation
+description: Install Log Bull using automated script, Docker run, or Docker Compose. Simple zero-config installation in minutes.
+---
+
+# Installation
+
+You have three ways to install Log Bull: automated script (recommended), simple Docker run, or Docker Compose setup.
+
+## System Requirements
+
+Log Bull requires the following minimum system resources to run properly:
+
+- **CPU**: At least 2 CPU cores
+- **RAM**: Minimum 4 GB RAM
+- **Storage**: 20 GB available disk space (more recommended for log retention)
+- **Docker**: Docker Engine 20.10+ and Docker Compose v2.0+
+- **Network**: Internet connection for initial setup and updates
+
+---
+
+## Option 1: Automated Installation Script (Recommended, Linux only)
+
+The installation script will:
+
+- ✅ Install Docker with Docker Compose (if not already installed)
+- ✅ Set up Log Bull
+- ✅ Configure automatic startup on system reboot
+
+```bash
+sudo apt-get install -y curl && \
+sudo curl -sSL https://raw.githubusercontent.com/logbull/logbull/main/install-logbull.sh \
+| sudo bash
+```
+
+---
+
+## Option 2: Simple Docker Run
+
+The easiest way to run Log Bull:
+
+```bash
+docker run -d \
+  --name logbull \
+  -p 4005:4005 \
+  -v ./logbull-data:/logbull-data \
+  --restart unless-stopped \
+  --health-cmd="curl -f http://localhost:4005/api/v1/system/health || exit 1" \
+  --health-interval=5s \
+  --health-retries=30 \
+  logbull/logbull:latest
+```
+
+This single command will:
+
+- ✅ Start Log Bull
+- ✅ Store all data in `./logbull-data` directory
+- ✅ Automatically restart on system reboot
+
+---
+
+## Option 3: Docker Compose Setup
+
+Create a `docker-compose.yml` file with the following configuration:
+
+```yaml
+version: '3'
+
+services:
+  logbull:
+    container_name: logbull
+    image: logbull/logbull:latest
+    ports:
+      - '4005:4005'
+    volumes:
+      - ./logbull-data:/logbull-data
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:4005/api/v1/system/health']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+```
+
+Then run:
+
+```bash
+docker compose up -d
+```
+
+---
+
+## Getting Started
+
+After installation:
+
+1. **Launch and access Log Bull**: Start Log Bull and navigate to `http://localhost:4005`
+2. **Create your first project**: Click "New Project" and copy the generated project ID
+3. **Integrate with your application**: Connect Log Bull to your existing logger in your codebase (Python, Go, Node.js, etc.)
+4. **Start viewing logs**: Watch your logs stream in real-time in the Log Bull dashboard!
+5. **Manage your setup**: Add team members, adjust limits, and configure settings if needed
+
+---

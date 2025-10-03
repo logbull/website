@@ -1,0 +1,251 @@
+---
+title: Python Integration - Log Bull Documentation
+description: Learn how to integrate Log Bull with Python applications using LogBullHandler. Works with standard logging, async support, and structured logging.
+---
+
+# Python
+
+LogBull Python library provides seamless integration with Python's standard logging module for sending logs to your LogBull server.
+
+**GitHub Repository:** [logbull-python](https://github.com/logbull/logbull-python)
+
+## Installation
+
+```bash
+pip install logbull
+```
+
+## Quick Start
+
+The fastest way to start using LogBull:
+
+```python
+import logging
+from logbull import LogBullHandler
+
+# Configure the handler
+handler = LogBullHandler(
+    project_id="12345678-1234-1234-1234-123456789012",
+    host="http://localhost:4005",
+    api_key="your-api-key"  # optional
+)
+
+# Set up logging
+logger = logging.getLogger(__name__)
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
+
+# Start logging
+logger.info("User logged in successfully", extra={
+    "user_id": "12345",
+    "username": "john_doe",
+    "ip": "192.168.1.100"
+})
+```
+
+## Usage Examples
+
+### 1. Basic Usage with Standard Logging
+
+```python
+import logging
+from logbull import LogBullHandler
+
+# Create and configure handler
+handler = LogBullHandler(
+    project_id="YOUR_PROJECT_ID",
+    host="http://YOUR_LOGBULL_SERVER:4005",
+    api_key="YOUR_API_KEY"
+)
+
+# Configure logger
+logger = logging.getLogger(__name__)
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
+
+# Simple logging
+logger.info("Application started")
+
+# Logging with extra fields
+logger.info("User action performed", extra={
+    "user_id": "12345",
+    "action": "login",
+    "ip_address": "192.168.1.100"
+})
+
+# Error logging
+logger.error("Database connection failed", extra={
+    "database": "users_db",
+    "error_code": 500
+})
+
+# Cleanup
+handler.flush()
+handler.close()
+```
+
+### 2. Context Management
+
+```python
+import logging
+from logbull import LogBullHandler
+
+handler = LogBullHandler(
+    project_id="YOUR_PROJECT_ID",
+    host="http://YOUR_LOGBULL_SERVER:4005"
+)
+
+logger = logging.getLogger(__name__)
+logger.addHandler(handler)
+
+# Add persistent context
+handler.add_context({
+    "session_id": "sess_abc123",
+    "user_id": "user_456",
+    "environment": "production"
+})
+
+# All subsequent logs will include this context
+logger.info("Processing request", extra={
+    "request_id": "req_789",
+    "endpoint": "/api/orders"
+})
+
+# Clear context when done
+handler.clear_context()
+```
+
+### 3. Structured Logging
+
+```python
+import logging
+from logbull import LogBullHandler
+
+handler = LogBullHandler(
+    project_id="YOUR_PROJECT_ID",
+    host="http://YOUR_LOGBULL_SERVER:4005"
+)
+
+logger = logging.getLogger(__name__)
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
+
+# Log with nested structure
+logger.info("Order processed", extra={
+    "order": {
+        "id": "ord_123",
+        "items": ["item1", "item2"],
+        "total": 149.99
+    },
+    "customer": {
+        "id": "cust_456",
+        "email": "customer@example.com"
+    },
+    "payment": {
+        "method": "credit_card",
+        "status": "completed"
+    }
+})
+```
+
+### 4. Exception Logging
+
+```python
+import logging
+from logbull import LogBullHandler
+
+handler = LogBullHandler(
+    project_id="YOUR_PROJECT_ID",
+    host="http://YOUR_LOGBULL_SERVER:4005"
+)
+
+logger = logging.getLogger(__name__)
+logger.addHandler(handler)
+logger.setLevel(logging.ERROR)
+
+try:
+    # Some operation that might fail
+    result = 10 / 0
+except Exception as e:
+    # Log exception with traceback
+    logger.exception("An error occurred", extra={
+        "operation": "division",
+        "user_id": "12345"
+    })
+```
+
+### 5. Async Support
+
+```python
+import asyncio
+import logging
+from logbull import AsyncLogBullHandler
+
+async def main():
+    handler = AsyncLogBullHandler(
+        project_id="YOUR_PROJECT_ID",
+        host="http://YOUR_LOGBULL_SERVER:4005"
+    )
+
+    logger = logging.getLogger(__name__)
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+
+    # Log asynchronously
+    logger.info("Async operation started", extra={
+        "task_id": "task_123"
+    })
+
+    await asyncio.sleep(1)
+
+    logger.info("Async operation completed")
+
+    # Cleanup
+    await handler.flush_async()
+    await handler.close_async()
+
+asyncio.run(main())
+```
+
+## Configuration Options
+
+### Handler Parameters
+
+- `project_id` (required): Your LogBull project ID (UUID format)
+- `host` (required): LogBull server URL (e.g., `http://localhost:4005`)
+- `api_key` (optional): API key for authentication
+- `level` (optional): Minimum log level to process (default: `logging.INFO`)
+- `batch_size` (optional): Number of logs to batch before sending (default: 100)
+- `flush_interval` (optional): Time in seconds between automatic flushes (default: 5.0)
+
+### Available Log Levels
+
+- `DEBUG`: Detailed information for debugging
+- `INFO`: General information messages
+- `WARNING`: Warning messages
+- `ERROR`: Error messages
+- `CRITICAL`: Critical error messages
+
+## API Reference
+
+### LogBullHandler Methods
+
+- `add_context(context: dict)`: Add persistent context to all logs
+- `clear_context()`: Remove all persistent context
+- `flush()`: Immediately send all queued logs
+- `close()`: Stop handler and send remaining logs
+
+### AsyncLogBullHandler Methods
+
+- `add_context(context: dict)`: Add persistent context to all logs
+- `clear_context()`: Remove all persistent context
+- `async flush_async()`: Asynchronously send all queued logs
+- `async close_async()`: Asynchronously stop handler and send remaining logs
+
+## Features
+
+- **Standard logging integration**: Works seamlessly with Python's built-in logging
+- **Context support**: Attach persistent context to logs (session_id, user_id, etc.)
+- **Async support**: AsyncLogBullHandler for async applications
+- **Automatic batching**: Efficient log batching and sending
+- **Thread-safe**: All operations are safe for concurrent use

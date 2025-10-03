@@ -1,0 +1,248 @@
+---
+title: Go Integration - Log Bull Documentation
+description: Learn how to integrate Log Bull with Go applications using slog, zap, or logrus. Multiple integration options for Go logging.
+---
+
+# Go
+
+LogBull Go library provides multiple integration options for sending logs to your LogBull server.
+
+**GitHub Repository:** [logbull-go](https://github.com/logbull/logbull-go)
+
+## Installation
+
+```bash
+go get github.com/logbull/logbull-go
+```
+
+## Quick Start
+
+The fastest way to start using LogBull is with the standalone logger:
+
+```go
+package main
+
+import (
+    "github.com/logbull/logbull-go/logbull"
+)
+
+func main() {
+    logger, err := logbull.NewLogger(logbull.Config{
+        ProjectID: "12345678-1234-1234-1234-123456789012",
+        Host:      "http://localhost:4005",
+        APIKey:    "your-api-key", // optional
+        LogLevel:  logbull.INFO,
+    })
+    if err != nil {
+        panic(err)
+    }
+    defer logger.Shutdown()
+
+    logger.Info("User logged in successfully", map[string]any{
+        "user_id":  "12345",
+        "username": "john_doe",
+        "ip":       "192.168.1.100",
+    })
+}
+```
+
+## Usage Examples
+
+### 1. Standalone LogBullLogger
+
+```go
+package main
+
+import (
+    "time"
+    "github.com/logbull/logbull-go/logbull"
+)
+
+func main() {
+    logger, err := logbull.NewLogger(logbull.Config{
+        ProjectID: "YOUR_PROJECT_ID",
+        Host:      "http://YOUR_LOGBULL_SERVER:4005",
+        APIKey:    "YOUR_API_KEY", // optional
+        LogLevel:  logbull.INFO,
+    })
+    if err != nil {
+        panic(err)
+    }
+    defer logger.Shutdown()
+
+    // Simple log
+    logger.Info("Application started", nil)
+
+    // Log with fields
+    logger.Info("User logged in successfully", map[string]any{
+        "user_id":  "12345",
+        "username": "john_doe",
+        "ip":       "192.168.1.100",
+    })
+
+    // Create logger with persistent context
+    sessionLogger := logger.WithContext(map[string]any{
+        "session_id": "sess_abc123",
+        "user_id":    "user_456",
+    })
+
+    sessionLogger.Info("Processing user request", map[string]any{
+        "action": "purchase",
+        "amount": 99.99,
+    })
+
+    // Log errors
+    logger.Error("Database connection failed", map[string]any{
+        "database":   "users_db",
+        "error_code": 500,
+    })
+
+    logger.Flush()
+    time.Sleep(2 * time.Second)
+}
+```
+
+### 2. Standard Library slog Integration
+
+```go
+package main
+
+import (
+    "log/slog"
+    "time"
+    "github.com/logbull/logbull-go/logbull"
+)
+
+func main() {
+    handler, err := logbull.NewSlogHandler(logbull.Config{
+        ProjectID: "YOUR_PROJECT_ID",
+        Host:      "http://YOUR_LOGBULL_SERVER:4005",
+        APIKey:    "YOUR_API_KEY",
+    })
+    if err != nil {
+        panic(err)
+    }
+    defer handler.Shutdown()
+
+    logger := slog.New(handler)
+
+    logger.Info("User action",
+        slog.String("user_id", "12345"),
+        slog.Int("action_id", 42),
+    )
+
+    logger.Info("Request processed",
+        slog.Group("request",
+            slog.String("method", "POST"),
+            slog.String("path", "/api/users"),
+            slog.Int("status", 201),
+        ),
+    )
+
+    handler.Flush()
+    time.Sleep(2 * time.Second)
+}
+```
+
+### 3. Uber-go Zap Integration
+
+```go
+package main
+
+import (
+    "time"
+    "go.uber.org/zap"
+    "github.com/logbull/logbull-go/logbull"
+)
+
+func main() {
+    core, err := logbull.NewZapCore(logbull.Config{
+        ProjectID: "YOUR_PROJECT_ID",
+        Host:      "http://YOUR_LOGBULL_SERVER:4005",
+        APIKey:    "YOUR_API_KEY",
+        LogLevel:  logbull.INFO,
+    })
+    if err != nil {
+        panic(err)
+    }
+    defer core.Shutdown()
+
+    logger := zap.New(core)
+
+    logger.Info("User action",
+        zap.String("user_id", "12345"),
+        zap.Int("action_id", 42),
+    )
+
+    logger.Error("Processing failed",
+        zap.String("component", "payment"),
+        zap.String("error", "connection timeout"),
+    )
+
+    logger.Sync()
+    time.Sleep(2 * time.Second)
+}
+```
+
+### 4. Sirupsen Logrus Integration
+
+```go
+package main
+
+import (
+    "time"
+    "github.com/sirupsen/logrus"
+    "github.com/logbull/logbull-go/logbull"
+)
+
+func main() {
+    hook, err := logbull.NewLogrusHook(logbull.Config{
+        ProjectID: "YOUR_PROJECT_ID",
+        Host:      "http://YOUR_LOGBULL_SERVER:4005",
+        APIKey:    "YOUR_API_KEY",
+        LogLevel:  logbull.INFO,
+    })
+    if err != nil {
+        panic(err)
+    }
+    defer hook.Shutdown()
+
+    logrus.AddHook(hook)
+
+    logrus.WithFields(logrus.Fields{
+        "user_id": "12345",
+        "action":  "login",
+    }).Info("User action")
+
+    logrus.WithFields(logrus.Fields{
+        "order_id": "ord_123",
+        "amount":   99.99,
+    }).Error("Payment failed")
+
+    hook.Flush()
+    time.Sleep(2 * time.Second)
+}
+```
+
+## Configuration Options
+
+### Config Parameters
+
+- `ProjectID` (required): Your LogBull project ID (UUID format)
+- `Host` (required): LogBull server URL (e.g., `http://localhost:4005`)
+- `APIKey` (optional): API key for authentication
+- `LogLevel` (optional): Minimum log level to process (default: `INFO`)
+
+### Available Log Levels
+
+- `DEBUG`: Detailed information for debugging
+- `INFO`: General information messages
+- `WARNING`: Warning messages
+- `ERROR`: Error messages
+- `CRITICAL`: Critical error messages
+
+## Features
+
+- **Multiple integration options**: Standalone logger, `slog` handler, `zap` core, and `logrus` hook
+- **Context support**: Attach persistent context to logs (session_id, user_id, etc.)
+- **Thread-safe**: All operations are safe for concurrent use

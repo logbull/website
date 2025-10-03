@@ -1,0 +1,9 @@
+{
+  "contribution": "Contribution guidelines",
+  "library-requirements": "Library requirements",
+  "*": {
+    "theme": {
+      "sidebar": true
+    }
+  }
+}

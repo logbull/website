@@ -1,0 +1,316 @@
+---
+title: Library Requirements - Log Bull
+description: Technical requirements and specifications for creating Log Bull libraries in any programming language.
+---
+
+# Library requirements
+
+Log Bull is a system for logs collection and viewing. To collect logs, there are libraries for different languages.
+
+Usually, Log Bull library for particular language has:
+
+- Log Bull class as a standalone logger
+- Log Bull as a handler for language standard logger (`logger` for Python, `slog` for Go, etc.)
+- Log Bull as a handler for different libraries popular within language (`Loguru`, `structlog` for Python, `zap` for Go, etc.)
+
+The main priority of the library - is to be simple for use (with minimalistic interface) and support the most popular libraries within language.
+
+## Configuration
+
+All library implementations must support these configuration parameters:
+
+### Required Parameters
+
+- `project_id` (string, UUID format) - Target project identifier
+- `host` (string, URL) - LogBull server endpoint (e.g., `http://localhost:4005`)
+
+### Optional Parameters
+
+- `api_key` (string) - API key for authentication (if server requires it)
+- `log_level` (string) - Minimum log level to process (default: INFO)
+
+### Never include in configuration
+
+- `batch_size` (integer) - Maximum logs per batch always 1000 by design
+- `batch_interval` (duration) - Time between batch sends always 1 second by design
+
+## Log Entry Format
+
+### Standard Log Structure
+
+```json
+{
+  "level": "INFO",
+  "message": "User logged in successfully",
+  "timestamp": "2025-01-15T10:30:45.123456789Z",
+  "fields": {
+    "user_id": "12345",
+    "session_id": "sess_abc",
+    "ip": "192.168.1.100"
+  }
+}
+```
+
+### Field Requirements
+
+- **level**: Uppercase string (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+- **message**: Non-empty string, max 10,000 characters
+- **timestamp**: RFC3339Nano format with nanosecond precision, must be unique and increasing to ensure correct order of logs
+- **fields**: Object/map with custom key-value pairs (max 100 fields)
+
+### Field Constraints
+
+- Field keys: Max 100 characters, must be non-empty strings
+- Field values: Must be JSON-serializable (convert non-serializable values to strings)
+- Total fields: Maximum 100 per log entry
+
+## HTTP API Integration
+
+### Endpoint
+
+```
+POST {host}/api/v1/logs/receiving/{project_id}
+```
+
+### Request Headers
+
+```
+Content-Type: application/json
+User-Agent: LogBull-{Language}-Client/{Version}
+X-API-Key: {api_key}  # Optional, if configured
+```
+
+### Request Body
+
+```json
+{
+  "logs": [
+    {
+      "level": "INFO",
+      "message": "Log message",
+      "timestamp": "2025-01-15T10:30:45.123456789Z",
+      "fields": {}
+    }
+  ]
+}
+```
+
+### Response Format
+
+```json
+{
+  "accepted": 99,
+  "rejected": 1,
+  "errors": [
+    {
+      "index": 5,
+      "message": "Invalid log level"
+    }
+  ]
+}
+```
+
+**Response fields:**
+
+- `accepted` (integer): Number of logs successfully accepted
+- `rejected` (integer): Number of logs rejected
+- `errors` (array, optional): Present only if `rejected > 0`. Contains details about rejected logs:
+  - `index` (integer): Index of the rejected log in the batch (0-based)
+  - `message` (string): Reason for rejection
+
+### Error Handling
+
+- HTTP errors: Log error message, log sending entry to stderr/console, mark batch as failed
+- Server errors (5xx) or network errors: Consider retry with exponential backoff (max 3 tries), print error message to stderr/console
+- Client errors (4xx): Log error, do not retry (likely configuration issue), print error message to stderr/console
+- **Rejected logs**: If server response indicates rejected logs (`rejected > 0`), print detailed information about each rejected log to stderr/console, including:
+  - The rejection reason from the `errors` array
+  - The rejected log's content (level, message, timestamp, fields)
+  - The index of the rejected log in the batch
+
+## Core Features
+
+### 1. Asynchronous Log Sending
+
+- Use background thread/goroutine for batch processing
+- Log operations should only add logs to internal queue (immediate return from log methods like `.debug()`, `.info()`, etc.)
+- Internal queue for pending logs
+- Automatic batch sending based on size or time interval
+
+### 2. Batch Processing
+
+- Collect logs into batches (up to 1000 logs)
+- Send batches at regular intervals (default: 1 second) even if batch is not full
+- Send immediately when batch reaches size limit
+- Concurrent HTTP requests using thread/connection pool - do not wait until previous request is completed
+
+### 3. Context Management
+
+Context allows attaching persistent fields to all subsequent logs:
+
+```python
+# Python example
+base_logger = LogBullLogger(project_id="...", host="...")
+request_logger = base_logger.with_context({"request_id": "req_123"})
+request_logger.info("Processing started")  # Includes request_id
+```
+
+**Implementation requirements:**
+
+- Create new logger instance with merged context
+- Share same sender instance (don't create duplicate senders)
+- Context fields should merge/override: child context > parent context
+
+### 4. Timestamp Generation
+
+- Use nanosecond precision timestamps
+- Ensure monotonic timestamps (each timestamp must be unique and increasing)
+- Format: RFC3339Nano (e.g., `2025-01-15T10:30:45.123456789Z`)
+- Use thread-safe timestamp generation
+
+### 5. Resource Management
+
+- Auto-register senders for cleanup on application exit
+- Implement `flush()` method to send all pending logs immediately
+- Implement `shutdown()` method to stop processing and cleanup
+- Wait for in-flight requests during shutdown (with timeout)
+
+### 6. Thread/Concurrency Safety
+
+- All public methods must be thread-safe
+- Use locks/mutexes for shared state
+- Queue operations must be concurrent-safe
+- Executor/pool management must be thread-safe
+
+### 7. Console Output
+
+Standalone logger should print logs to console in addition to sending them:
+
+**Format:**
+
+```
+[2025-01-15T10:30:45.123456789Z] [INFO] User logged in (user_id=12345, ip=192.168.1.100)
+```
+
+**Requirements:**
+
+- Print before queuing for sending
+- Include timestamp, level, message, and fields
+- Use stderr for ERROR/CRITICAL levels (language-specific best practice)
+
+### Library
+
+Library should not include dependencies on third-party libraries (only for dev and testing, but not for production).
+
+## Integration Patterns (Python example, similar for other languages)
+
+### Standalone Logger Pattern
+
+```python
+# Initialization
+logger = LogBullLogger(
+    project_id="uuid-here",
+    host="http://localhost:4005",
+    api_key="optional-key",
+    log_level="INFO"
+)
+
+# Basic logging
+logger.info("Message", fields={"key": "value"})
+logger.error("Error occurred", fields={"error_code": 500})
+
+# Context management
+request_logger = logger.with_context({"request_id": "req_123"})
+request_logger.info("Processing")
+
+# Cleanup
+logger.shutdown()
+```
+
+### Standard Library Handler Pattern
+
+```python
+import logging
+from logbull import LogBullHandler
+
+logger = logging.getLogger(__name__)
+handler = LogBullHandler(
+    project_id="uuid-here",
+    host="http://localhost:4005"
+)
+logger.addHandler(handler)
+
+# Use standard logging
+logger.info("Message", extra={"field": "value"})
+```
+
+### Third-Party Library Pattern
+
+```python
+from loguru import logger
+from logbull import LoguruSink
+
+logger.add(
+    LoguruSink(project_id="uuid-here", host="http://localhost:4005"),
+    level="INFO"
+)
+
+logger.info("Message", user_id=123)
+```
+
+## Error Handling Philosophy
+
+1. **Never break user's application**: Catch all exceptions in log methods
+2. **Fail silently**: Log errors to stderr/console, but don't throw exceptions
+3. **Informative errors**: Provide clear error messages for configuration issues
+4. **Validation on init**: Validate configuration at initialization, not at runtime
+5. **Graceful degradation**: If LogBull server is unavailable, continue logging locally
+
+## Testing Requirements
+
+Every library implementation must include:
+
+1. **Unit tests** for all core components
+2. **Integration tests** with mock HTTP server
+3. **Concurrency tests** to verify thread-safety
+4. **Handler/integration tests** for each supported library
+5. **Configuration validation tests**
+
+## Documentation Requirements
+
+Each library must include:
+
+1. **README.md** with:
+   - Installation instructions
+   - Quick start guide
+   - Usage examples for all integrations
+   - Configuration reference
+   - API documentation
+
+2. **Code comments** for:
+   - Complex logic and algorithms
+   - Non-obvious design decisions
+   - Thread-safety considerations
+   - Not for self-explanatory code
+
+3. **Type annotations/documentation** (language-specific):
+   - Python: Type hints
+   - Go: GoDoc comments
+   - TypeScript: TypeScript types
+   - Java: Javadoc
+   - etc.
+
+## License and Versioning
+
+- **License**: Apache 2.0
+- **Versioning**: Semantic versioning (MAJOR.MINOR.PATCH)
+- **Commit format**:
+  - `FEATURE (area): description` → MINOR bump
+  - `FIX (area): description` → PATCH bump
+  - `REFACTOR (area): description` → No bump
+
+## After PR
+
+1. Update code example on main website
+2. Update code example in website docs
+3. Update code example in Log Bull "How to send logs?" component
