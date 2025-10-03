@@ -16,29 +16,8 @@ export default withNextra({
   images: {
     unoptimized: true,
   },
+  trailingSlash: true,
 
-  // Add regular Next.js options here
-  headers: async () => [
-    {
-      source: '/:path*',
-      headers: [
-        {
-          key: 'X-DNS-Prefetch-Control',
-          value: 'on',
-        },
-        {
-          key: 'X-Frame-Options',
-          value: 'SAMEORIGIN',
-        },
-        {
-          key: 'X-Content-Type-Options',
-          value: 'nosniff',
-        },
-        {
-          key: 'Referrer-Policy',
-          value: 'origin-when-cross-origin',
-        },
-      ],
-    },
-  ],
+  // Skip trailing slash for specific paths if needed
+  skipTrailingSlashRedirect: false,
 } as NextConfig);

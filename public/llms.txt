@@ -14,7 +14,7 @@ Log Bull is a free, open-source, self-hosted log collection and viewing system d
 
 ## Installation
 For detailed installation instructions, visit:
-https://logbull.com/installation
+https://logbull.com/installation/
 
 Quick install options:
 1. Automated script (recommended)
@@ -25,11 +25,11 @@ Quick install options:
 
 ### Python
 For Python integration examples with standard logging library, visit:
-https://logbull.com/languages/python
+https://logbull.com/languages/python/
 
 ### Go (Golang)
 For Go integration examples with structured logging, visit:
-https://logbull.com/languages/go
+https://logbull.com/languages/go/
 
 ### Other Languages
 Log Bull supports any language that can send HTTP requests, including:
@@ -49,14 +49,14 @@ Log Bull supports any language that can send HTTP requests, including:
 - Main website: https://logbull.com
 - GitHub repository: https://github.com/logbull/logbull
 - Community: https://t.me/logbull_community
-- Installation guide: https://logbull.com/installation
-- Python examples: https://logbull.com/languages/python
-- Go examples: https://logbull.com/languages/go
+- Installation guide: https://logbull.com/installation/
+- Python examples: https://logbull.com/languages/python/
+- Go examples: https://logbull.com/languages/go/
 
 ## Contributing
 For contribution guidelines, visit:
-https://logbull.com/contribution/contribution
+https://logbull.com/contribution/contribution/
 
 For library requirements, visit:
-https://logbull.com/contribution/library-requirements
+https://logbull.com/contribution/library-requirements/
 

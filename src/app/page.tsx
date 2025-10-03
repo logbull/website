@@ -208,7 +208,7 @@ export default function HomePage() {
           </div>
 
           <div className="ml-auto mr-4 hidden gap-3 sm:mr-6 md:mr-10 lg:flex lg:gap-5">
-            <a className="hover:opacity-70" href="/installation">
+            <a className="hover:opacity-70" href="/installation/">
               Docs
             </a>
             <a className="hover:opacity-70" href="#guide">
@@ -558,7 +558,7 @@ export default function HomePage() {
               <li className="flex items-center">
                 <span className="mr-3 text-emerald-600">•</span>
                 <a
-                  href="/languages/python"
+                  href="/languages/python/"
                   className="text-emerald-600 underline decoration-emerald-600 underline-offset-2 transition-colors hover:text-emerald-700"
                 >
                   Python
@@ -567,7 +567,7 @@ export default function HomePage() {
               <li className="flex items-center">
                 <span className="mr-3 text-emerald-600">•</span>
                 <a
-                  href="/languages/go"
+                  href="/languages/go/"
                   className="text-emerald-600 underline decoration-emerald-600 underline-offset-2 transition-colors hover:text-emerald-700"
                 >
                   Go
@@ -746,7 +746,7 @@ export default function HomePage() {
         <div className="w-[320px] max-w-[320px] sm:w-[640px] sm:max-w-[640px] lg:w-[1200px] lg:max-w-[1200px]">
           <div className="flex flex-col items-center space-y-4">
             <div className="flex flex-wrap justify-center gap-6 text-white">
-              <a href="/installation" className="transition-colors hover:text-emerald-200">
+              <a href="/installation/" className="transition-colors hover:text-emerald-200">
                 Docs
               </a>
 
