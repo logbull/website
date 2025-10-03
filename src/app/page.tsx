@@ -301,7 +301,7 @@ export default function HomePage() {
       <div className="bg-gradient-to-b from-white to-gray-50 py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-[340px] rounded-lg border border-emerald-600 bg-gradient-to-br p-5 shadow-lg sm:max-w-[600px] md:p-6">
           <div className="space-y-3 text-sm leading-relaxed md:text-base">
-            <p className="font-medium">
+            <p>
               I got bored of the complexity of logging systems. So I created the most simple
               solution I could for myself (I use it in production a lot):{' '}
               <span className="underline decoration-emerald-600 decoration-2">
