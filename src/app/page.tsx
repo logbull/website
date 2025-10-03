@@ -290,8 +290,7 @@ export default function HomePage() {
                 src="/logbull.svg"
                 alt="Log Bull screenshot"
                 className="h-auto w-full"
-                fetchPriority="high"
-                loading="eager"
+                loading="lazy"
               />
             </div>
           </div>
