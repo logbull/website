@@ -241,7 +241,8 @@ export default function HomePage() {
                 loading="eager"
               />
               <span className="text-sm sm:text-base">
-                Star on GitHub, it&apos;s really important ❤️
+                Star on GitHub
+                <span className="hidden sm:inline">, it&apos;s really important ❤️</span>
               </span>
             </div>
           </a>
@@ -252,7 +253,7 @@ export default function HomePage() {
       {/* ======================== NAVBAR ======================== */}
 
       {/* ======================== MAIN CONTENT ======================== */}
-      <div className="px-4 py-8 sm:px-6 sm:py-12 md:py-16 lg:py-24">
+      <div className="px-6 py-12 md:py-16 lg:py-24">
         <div className="mx-auto max-w-[340px] sm:max-w-[600px] md:max-w-[1200px]">
           <main>
             <div className="space-y-6 sm:space-y-8">
@@ -280,28 +281,69 @@ export default function HomePage() {
                   How to install Log Bull?
                 </a>
               </div>
-
-              <div className="text-center">
-                Powered by developer of{' '}
-                <a
-                  href="https://postgresus.com"
-                  target="_blank"
-                  className="underline decoration-emerald-600 underline-offset-2 transition-colors hover:text-emerald-700 hover:decoration-emerald-600"
-                >
-                  Postgresus
-                </a>
-              </div>
             </div>
           </main>
 
-          <div className="mt-12 sm:mt-16 md:mt-20">
+          <div className="mt-12">
             <div className="mx-auto max-w-[1440px]">
-              <img src="/logbull.svg" alt="Log Bull screenshot" className="h-auto w-full" />
+              <img
+                src="/logbull.svg"
+                alt="Log Bull screenshot"
+                className="h-auto w-full"
+                fetchPriority="high"
+                loading="eager"
+              />
             </div>
           </div>
         </div>
       </div>
       {/* ======================== MAIN CONTENT ======================== */}
+
+      <div className="bg-gradient-to-b from-white to-gray-50 py-12 sm:py-16 md:py-20">
+        <div className="mx-auto max-w-[340px] rounded-lg border border-emerald-600 bg-gradient-to-br p-5 shadow-lg sm:max-w-[600px] md:max-w-[1200px] md:p-6">
+          <div className="space-y-3 text-sm leading-relaxed md:text-base">
+            <p className="font-medium">
+              I got bored of the complexity of logging systems. So I created the most simple
+              solution I could for myself (I use it in production a lot):{' '}
+              <span className="underline decoration-emerald-600 decoration-2">
+                just write a couple of lines of code — and see logs
+              </span>
+              .
+            </p>
+
+            <p>
+              <b>Log Bull only collects logs without tons of features.</b> Just the bare essentials
+              to make it work. No huge UI, no dashboards, no metrics, no lists of settings, no hours
+              of installation.
+            </p>
+
+            <p>
+              By the way, the project is based on OpenSearch and written in Go. If you like what
+              I&apos;ve created — please star it on GitHub ⭐. It&apos;s really will help me.
+            </p>
+
+            <div className="mt-4 flex items-center gap-3 border-t border-emerald-200 pt-3">
+              <img
+                src="/rostislav.png"
+                alt="Rostislav Dugin"
+                loading="lazy"
+                className="h-12 w-12 flex-shrink-0 rounded-full object-cover"
+              />
+
+              <div>
+                <a
+                  href="https://rostislav-dugin.com"
+                  target="_blank"
+                  className="font-semibold text-emerald-600 transition-colors hover:text-emerald-700"
+                >
+                  Rostislav Dugin
+                </a>
+                <p className="text-sm text-gray-600">Developer of Log Bull</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* ======================== FEATURES ======================== */}
       <div id="guide" className="bg-gray-50 px-4 py-12 sm:px-6 sm:py-16 md:py-20 lg:py-28">
@@ -570,7 +612,7 @@ export default function HomePage() {
                   href="/languages/go/"
                   className="text-emerald-600 underline decoration-emerald-600 underline-offset-2 transition-colors hover:text-emerald-700"
                 >
-                  Go
+                  Golang
                 </a>
               </li>
               <li className="flex items-center">
