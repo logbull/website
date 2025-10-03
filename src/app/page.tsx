@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     url: 'https://logbull.com',
     title: 'Log Bull - simple log collection and view system',
     description:
-      'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simpler than ELK or Loki.',
+      'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simple alternative to ELK and Loki.',
     siteName: 'Log Bull',
     locale: 'en_US',
   },
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Log Bull - simple log collection and view system',
     description:
-      'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simpler than ELK or Loki.',
+      'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simple alternative to ELK and Loki.',
   },
   applicationName: 'Log Bull',
   appleWebApp: {
@@ -67,7 +67,7 @@ export default function HomePage() {
             '@type': 'SoftwareApplication',
             name: 'Log Bull',
             description:
-              'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simpler than ELK or Loki.',
+              'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simple alternative to ELK and Loki.',
             url: 'https://logbull.com',
             applicationCategory: 'DeveloperApplication',
             operatingSystem: 'Linux, Windows, macOS',

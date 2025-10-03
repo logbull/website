@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     template: '%s | Log Bull',
   },
   description:
-    'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simpler than ELK or Loki.',
+    'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simple alternative to ELK and Loki.',
   keywords: [
     'log collection',
     'log management',
@@ -46,13 +46,13 @@ export const metadata: Metadata = {
     siteName: 'Log Bull',
     title: 'Log Bull - Simple Log Collection and View System',
     description:
-      'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simpler than ELK or Loki.',
+      'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simple alternative to ELK and Loki.',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Log Bull - Simple Log Collection and View System',
     description:
-      'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simpler than ELK or Loki.',
+      'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simple alternative to ELK and Loki.',
   },
   alternates: {
     canonical: 'https://logbull.com',
