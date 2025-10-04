@@ -303,7 +303,7 @@ export default function HomePage() {
           <div className="space-y-3 text-sm leading-relaxed md:text-base">
             <p>
               I got bored of the complexity of logging systems. So I created the most simple
-              solution I could for myself (I use it in production a lot):{' '}
+              solution from UX side that I could for myself (I use it in production a lot):{' '}
               <span className="underline decoration-emerald-600 decoration-2">
                 just write a couple of lines of code — and see logs
               </span>
