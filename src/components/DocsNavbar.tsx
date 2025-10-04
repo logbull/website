@@ -38,7 +38,10 @@ export function DocsNavbar() {
               height="16"
               loading="eager"
             />
-            <span className="text-sm sm:text-base">Star on GitHub, it&apos;s really important ❤️</span>
+            <span className="text-sm sm:text-base">
+              Star on GitHub
+              <span className="hidden sm:inline">, it&apos;s really important ❤️</span>
+            </span>
           </div>
         </a>
       </div>
