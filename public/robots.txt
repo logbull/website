@@ -1,6 +1,5 @@
 # Allow all crawlers
 User-agent: *
-Allow: /
 
 # Sitemap
 Sitemap: https://logbull.com/sitemap.xml
