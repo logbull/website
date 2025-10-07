@@ -211,13 +211,13 @@ export default function HomePage() {
             <a className="hover:opacity-70" href="/installation/">
               Docs
             </a>
-            <a className="hover:opacity-70" href="#guide">
+            <a className="hover:opacity-70" href="#features">
               Features
             </a>
-            <a className="hover:opacity-70" href="#features">
+            <a className="hover:opacity-70" href="#how-to-use-in-code">
               Usage in code
             </a>
-            <a className="hover:opacity-70" href="#installation">
+            <a className="hover:opacity-70" href="#how-to-install">
               Installation
             </a>
             <a className="hover:opacity-70" href="https://t.me/logbull_community" target="_blank">
@@ -268,14 +268,14 @@ export default function HomePage() {
 
               <div className="mx-auto flex max-w-[600px] flex-col items-center justify-center gap-2 px-4 sm:flex-row sm:gap-4">
                 <a
-                  href="#features"
+                  href="#how-to-use-in-code"
                   className="w-full cursor-pointer rounded-lg border-2 border-emerald-600 bg-emerald-600 px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:border-emerald-700 hover:bg-emerald-700 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
                 >
                   How to use in code?
                 </a>
 
                 <a
-                  href="#installation"
+                  href="#how-to-install"
                   className="w-full cursor-pointer rounded-lg border-2 border-emerald-600 bg-white px-4 py-2 text-center text-sm font-semibold transition-colors hover:border-emerald-700 hover:bg-emerald-50 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
                 >
                   How to install Log Bull?
@@ -345,7 +345,7 @@ export default function HomePage() {
       </div>
 
       {/* ======================== FEATURES ======================== */}
-      <div id="guide" className="bg-gray-50 px-4 py-12 sm:px-6 sm:py-16 md:py-20 lg:py-28">
+      <div id="features" className="bg-gray-50 px-4 py-12 sm:px-6 sm:py-16 md:py-20 lg:py-28">
         <div className="mx-auto max-w-[340px] sm:max-w-[600px] md:max-w-[1200px]">
           <div className="mb-12 text-center">
             <h2 className="mx-auto max-w-[600px] text-2xl font-bold leading-[1.2] sm:text-4xl md:text-5xl">
@@ -576,7 +576,7 @@ export default function HomePage() {
       {/* ======================== FEATURES ======================== */}
 
       {/* ======================== HOW TO USE IN CODE ======================== */}
-      <div id="features" className="">
+      <div id="how-to-use-in-code" className="">
         <div className="mx-auto max-w-[340px] border-b-2 border-emerald-600 px-4 py-12 sm:max-w-[600px] sm:px-6 sm:py-16 md:max-w-[1200px] md:py-20 lg:py-28">
           <div className="mb-12 text-center">
             <h2 className="mx-auto max-w-[600px] text-2xl font-bold leading-[1.2] sm:text-4xl md:text-5xl">
@@ -615,6 +615,15 @@ export default function HomePage() {
                 </a>
               </li>
               <li className="flex items-center">
+                <span className="mr-3 text-emerald-600">•</span>
+                <a
+                  href="/languages/java/"
+                  className="text-emerald-600 underline decoration-emerald-600 underline-offset-2 transition-colors hover:text-emerald-700"
+                >
+                  Java
+                </a>
+              </li>
+              <li className="flex items-center">
                 <span className="mr-3 text-gray-400">•</span>
                 <span className="text-gray-400">Other coming soon...</span>
               </li>
@@ -625,7 +634,7 @@ export default function HomePage() {
       {/* ======================== HOW TO USE IN CODE ======================== */}
 
       {/* ======================== INSTALLATION ======================== */}
-      <div id="installation" className="px-4 py-12 sm:px-6 sm:py-16 md:py-20 lg:py-28">
+      <div id="how-to-install" className="px-4 py-12 sm:px-6 sm:py-16 md:py-20 lg:py-28">
         <div className="mx-auto max-w-[340px] sm:max-w-[600px] md:max-w-[1200px]">
           <div className="mb-12 text-center">
             <h2 className="mx-auto max-w-[600px] text-2xl font-bold leading-[1.2] sm:text-4xl md:text-5xl">

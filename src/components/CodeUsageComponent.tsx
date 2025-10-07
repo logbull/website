@@ -8,12 +8,19 @@ type Language = 'Python' | 'Go' | 'Java' | 'PHP' | 'JavaScript' | 'Ruby';
 
 type Integration = {
   label: string;
-  code: string;
+  code: string | ((installMethod: number) => string);
+  language: string;
+  configuration?: string;
+};
+
+type InstallationMethod = {
+  label: string;
+  command: string | ((integrationIndex: number) => string);
   language: string;
 };
 
 type LanguageConfig = {
-  installation: string;
+  installation: string | InstallationMethod[];
   installCommand: string;
   integrations: Integration[];
 };
@@ -24,15 +31,15 @@ const languageConfigs: Record<Language, LanguageConfig> = {
     installCommand: 'bash',
     integrations: [
       {
-        label: 'LogBull Standalone',
+        label: 'LogBull',
         language: 'python',
         code: `from logbull import LogBullLogger
 
 # Initialize logger
 logger = LogBullLogger(
-    project_id="YOUR_PROJECT_ID",
-    host="http://your-logbull-server:4005",
-    api_key="YOUR_API_KEY"  # optional, if you need it
+    host="http://LOGBULL_HOST_PLACEHOLDER",
+    project_id="LOGBULL_PROJECT_ID_PLACEHOLDER",
+    api_key="LOGBULL_API_KEY_PLACEHOLDER"  # optional, if you need it
 )
 
 # Log messages (printed to console AND sent to LogBull)
@@ -63,9 +70,9 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 logbull_handler = LogBullHandler(
-    project_id="YOUR_PROJECT_ID",
-    host="http://YOUR_LOGBULL_SERVER:4005",
-    api_key="YOUR_API_KEY"  # optional, if you need it
+    host="http://LOGBULL_HOST_PLACEHOLDER",
+    project_id="LOGBULL_PROJECT_ID_PLACEHOLDER",
+    api_key="LOGBULL_API_KEY_PLACEHOLDER"  # optional, if you need it
 )
 logger.addHandler(logbull_handler)
 
@@ -89,9 +96,9 @@ from logbull import LoguruSink
 # Add LogBull as a Loguru sink
 logger.add(
     LoguruSink(
-        project_id="YOUR_PROJECT_ID",
-        host="http://YOUR_LOGBULL_SERVER:4005",
-        api_key="YOUR_API_KEY"  # optional, if you need it
+        host="http://LOGBULL_HOST_PLACEHOLDER",
+        project_id="LOGBULL_PROJECT_ID_PLACEHOLDER",
+        api_key="LOGBULL_API_KEY_PLACEHOLDER"  # optional, if you need it
     ),
     level="INFO",
     format="{time} | {level} | {message}",
@@ -120,9 +127,9 @@ structlog.configure(
         structlog.processors.TimeStamper(fmt="iso"),
         structlog.processors.add_log_level,
         StructlogProcessor(
-            project_id="YOUR_PROJECT_ID",
-            host="http://YOUR_LOGBULL_SERVER:4005",
-            api_key="YOUR_API_KEY"  # optional, if you need it
+            host="http://LOGBULL_HOST_PLACEHOLDER",
+            project_id="LOGBULL_PROJECT_ID_PLACEHOLDER",
+            api_key="LOGBULL_API_KEY_PLACEHOLDER"  # optional, if you need it
         ),
         structlog.processors.JSONRenderer(), # make sure it is the last processor
     ],
@@ -156,7 +163,7 @@ logger.error("Payment gateway error",
     installCommand: 'bash',
     integrations: [
       {
-        label: 'LogBull Standalone',
+        label: 'LogBull',
         language: 'go',
         code: `package main
 
@@ -166,9 +173,9 @@ import (
 
 func main() {
     logger, err := logbull.NewLogger(logbull.Config{
-        ProjectID: "12345678-1234-1234-1234-123456789012",
-        Host:      "http://localhost:4005",
-        APIKey:    "your-api-key", // optional
+        Host:      "http://LOGBULL_HOST_PLACEHOLDER",
+        ProjectID: "LOGBULL_PROJECT_ID_PLACEHOLDER",
+        APIKey:    "LOGBULL_API_KEY_PLACEHOLDER", // optional
         LogLevel:  logbull.INFO,
     })
     if err != nil {
@@ -197,9 +204,9 @@ import (
 
 func main() {
     handler, err := logbull.NewSlogHandler(logbull.Config{
-        ProjectID: "YOUR_PROJECT_ID",
-        Host:      "http://YOUR_LOGBULL_SERVER:4005",
-        APIKey:    "YOUR_API_KEY",
+        Host:      "http://LOGBULL_HOST_PLACEHOLDER",
+        ProjectID: "LOGBULL_PROJECT_ID_PLACEHOLDER",
+        APIKey:    "LOGBULL_API_KEY_PLACEHOLDER",
     })
     if err != nil {
         panic(err)
@@ -240,9 +247,9 @@ import (
 
 func main() {
     core, err := logbull.NewZapCore(logbull.Config{
-        ProjectID: "YOUR_PROJECT_ID",
-        Host:      "http://YOUR_LOGBULL_SERVER:4005",
-        APIKey:    "YOUR_API_KEY",
+        Host:      "http://LOGBULL_HOST_PLACEHOLDER",
+        ProjectID: "LOGBULL_PROJECT_ID_PLACEHOLDER",
+        APIKey:    "LOGBULL_API_KEY_PLACEHOLDER",
         LogLevel:  logbull.INFO,
     })
     if err != nil {
@@ -281,9 +288,9 @@ import (
 
 func main() {
     hook, err := logbull.NewLogrusHook(logbull.Config{
-        ProjectID: "YOUR_PROJECT_ID",
-        Host:      "http://YOUR_LOGBULL_SERVER:4005",
-        APIKey:    "YOUR_API_KEY",
+        Host:      "http://LOGBULL_HOST_PLACEHOLDER",
+        ProjectID: "LOGBULL_PROJECT_ID_PLACEHOLDER",
+        APIKey:    "LOGBULL_API_KEY_PLACEHOLDER",
         LogLevel:  logbull.INFO,
     })
     if err != nil {
@@ -310,13 +317,170 @@ func main() {
     ],
   },
   Java: {
-    installation: 'Coming soon',
-    installCommand: 'text',
+    installation: [
+      {
+        label: 'Maven',
+        language: 'xml',
+        command: (integrationIndex: number) => {
+          // Spring Boot needs both dependencies
+          if (integrationIndex === 0) {
+            return `<dependency>
+    <groupId>com.logbull</groupId>
+    <artifactId>logbull</artifactId>
+    <version>RELEASE</version>
+</dependency>
+
+<dependency>
+    <groupId>com.logbull</groupId>
+    <artifactId>logbull-spring-boot-starter</artifactId>
+    <version>RELEASE</version>
+</dependency>`;
+          }
+          // Logback and LogBull only need core
+          return `<dependency>
+    <groupId>com.logbull</groupId>
+    <artifactId>logbull</artifactId>
+    <version>RELEASE</version>
+</dependency>`;
+        },
+      },
+      {
+        label: 'Gradle',
+        language: 'groovy',
+        command: (integrationIndex: number) => {
+          // Spring Boot needs both dependencies
+          if (integrationIndex === 0) {
+            return `implementation 'com.logbull:logbull:+'
+implementation 'com.logbull:logbull-spring-boot-starter:+'`;
+          }
+          // Logback and LogBull only need core
+          return `implementation 'com.logbull:logbull:+'`;
+        },
+      },
+    ],
+    installCommand: 'xml',
     integrations: [
       {
-        label: 'Coming Soon',
-        language: 'text',
-        code: 'Java integration is coming soon!\n\nStay tuned for updates.',
+        label: 'Spring Boot',
+        language: 'java',
+        configuration: `# application.yml
+logbull:
+  enabled: true
+  project-id: LOGBULL_PROJECT_ID_PLACEHOLDER
+  host: http://LOGBULL_HOST_PLACEHOLDER
+  api-key: LOGBULL_API_KEY_PLACEHOLDER
+  log-level: INFO
+
+# application.properties
+logbull.enabled=true
+logbull.project-id=LOGBULL_PROJECT_ID_PLACEHOLDER
+logbull.host=http://LOGBULL_HOST_PLACEHOLDER
+logbull.api-key=LOGBULL_API_KEY_PLACEHOLDER
+logbull.log-level=INFO`,
+        code: `import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+@Service
+public class PaymentService {
+    private static final Logger logger = LoggerFactory.getLogger(PaymentService.class);
+
+    public void processPayment(String orderId, double amount) {
+        // Logs automatically sent to LogBull
+        logger.info("Processing payment for order: {}, amount: {}", orderId, amount);
+    }
+}`,
+      },
+      {
+        label: 'Logback + SLF4J',
+        language: 'xml',
+        configuration: `<!-- logback.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="LOGBULL" class="com.logbull.slf4j.LogBullLogbackAppender">
+        <projectId>LOGBULL_PROJECT_ID_PLACEHOLDER</projectId>
+        <host>http://LOGBULL_HOST_PLACEHOLDER</host>
+        <apiKey>LOGBULL_API_KEY_PLACEHOLDER</apiKey>
+        <logLevel>INFO</logLevel>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="LOGBULL" />
+    </root>
+</configuration>`,
+        code: `import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
+public class LogbackExample {
+    private static final Logger logger = LoggerFactory.getLogger(LogbackExample.class);
+
+    public static void main(String[] args) {
+        logger.info("Application started");
+
+        // Using MDC for context
+        MDC.put("session_id", "sess_abc123");
+        MDC.put("user_id", "user_456");
+
+        try {
+            logger.info("Processing user request");
+        } finally {
+            MDC.clear();
+        }
+    }
+}`,
+      },
+      {
+        label: 'LogBull',
+        language: 'java',
+        code: `import com.logbull.LogBullLogger;
+import com.logbull.core.LogLevel;
+
+import java.util.Map;
+
+public class Application {
+    public static void main(String[] args) {
+        LogBullLogger logger = LogBullLogger.builder()
+            .host("http://LOGBULL_HOST_PLACEHOLDER")
+            .projectId("LOGBULL_PROJECT_ID_PLACEHOLDER")
+            .apiKey("LOGBULL_API_KEY_PLACEHOLDER")  // optional
+            .logLevel(LogLevel.INFO)
+            .build();
+
+        try {
+            logger.info("User logged in successfully", Map.of(
+                "user_id", "12345",
+                "username", "john_doe",
+                "ip", "192.168.1.100"
+            ));
+
+            // With context
+            LogBullLogger sessionLogger = logger.withContext(Map.of(
+                "session_id", "sess_abc123",
+                "user_id", "user_456"
+            ));
+
+            sessionLogger.info("Processing request", Map.of(
+                "action", "purchase"
+            ));
+
+            logger.flush();
+            Thread.sleep(2000);
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            logger.shutdown();
+        }
+    }
+}`,
       },
     ],
   },
@@ -355,19 +519,101 @@ func main() {
   },
 };
 
-const languages: Language[] = ['Python', 'Go', 'Java', 'PHP', 'JavaScript', 'Ruby'];
+const languages: Language[] = ['Python', 'Go', 'Java', 'JavaScript', 'PHP', 'Ruby'];
 
-export function CodeUsageComponent() {
+interface Props {
+  logbullHost?: string;
+  logbullProjectId?: string;
+  logbullApiKey?: string;
+  isLogBullApiKeyRequired?: boolean;
+}
+
+export function CodeUsageComponent({
+  logbullHost = 'http://LOGBULL_HOST',
+  logbullProjectId = 'LOGBULL_PROJECT_ID',
+  logbullApiKey = 'LOGBULL_API_KEY',
+  isLogBullApiKeyRequired = false,
+}: Props) {
   const [selectedLanguage, setSelectedLanguage] = useState<Language>('Python');
   const [selectedIntegration, setSelectedIntegration] = useState(0);
+  const [selectedInstallMethod, setSelectedInstallMethod] = useState(0);
   const [copied, setCopied] = useState(false);
 
   const currentConfig = languageConfigs[selectedLanguage];
   const currentIntegration = currentConfig.integrations[selectedIntegration];
+  const hasMultipleInstallMethods = Array.isArray(currentConfig.installation);
+  const hasConfiguration = currentIntegration.configuration !== undefined;
+
+  // Helper function to remove API key lines from code
+  const removeApiKeyLines = (code: string): string => {
+    const lines = code.split('\n');
+    const filteredLines = lines.filter((line) => {
+      const lowerLine = line.toLowerCase();
+      return !(
+        lowerLine.includes('api_key') ||
+        lowerLine.includes('apikey') ||
+        lowerLine.includes('api-key')
+      );
+    });
+    return filteredLines.join('\n');
+  };
+
+  // Helper function to replace placeholders
+  const replacePlaceholders = (text: string): string => {
+    let result = text
+      .replace(/http:\/\/LOGBULL_HOST_PLACEHOLDER/g, logbullHost)
+      .replace(/LOGBULL_PROJECT_ID_PLACEHOLDER/g, logbullProjectId);
+
+    if (isLogBullApiKeyRequired) {
+      result = result.replace(/LOGBULL_API_KEY_PLACEHOLDER/g, logbullApiKey);
+    }
+
+    return result;
+  };
+
+  // Get the actual code (either string or result of function)
+  const getRawCode = () => {
+    return typeof currentIntegration.code === 'function'
+      ? currentIntegration.code(selectedInstallMethod)
+      : currentIntegration.code;
+  };
+
+  const currentCode = (() => {
+    let code = getRawCode();
+    code = replacePlaceholders(code);
+    if (!isLogBullApiKeyRequired) {
+      code = removeApiKeyLines(code);
+    }
+    return code;
+  })();
+
+  // Get the installation command
+  const getInstallationCommand = () => {
+    let command: string;
+    if (hasMultipleInstallMethods) {
+      const method = (currentConfig.installation as InstallationMethod[])[selectedInstallMethod];
+      command =
+        typeof method.command === 'function' ? method.command(selectedIntegration) : method.command;
+    } else {
+      command = currentConfig.installation as string;
+    }
+    return replacePlaceholders(command);
+  };
+
+  // Get configuration with placeholders replaced
+  const getConfiguration = () => {
+    if (!currentIntegration.configuration) return '';
+    let config = replacePlaceholders(currentIntegration.configuration);
+    if (!isLogBullApiKeyRequired) {
+      config = removeApiKeyLines(config);
+    }
+    return config;
+  };
 
   const handleLanguageChange = (language: Language) => {
     setSelectedLanguage(language);
     setSelectedIntegration(0); // Reset to first tab
+    setSelectedInstallMethod(0); // Reset to first installation method
     setCopied(false);
   };
 
@@ -376,9 +622,14 @@ export function CodeUsageComponent() {
     setCopied(false);
   };
 
+  const handleInstallMethodChange = (index: number) => {
+    setSelectedInstallMethod(index);
+    setCopied(false);
+  };
+
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(currentIntegration.code);
+      await navigator.clipboard.writeText(currentCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -405,26 +656,6 @@ export function CodeUsageComponent() {
         ))}
       </div>
 
-      {/* Installation section */}
-      <div className="mb-4 overflow-hidden rounded-lg bg-gray-50 p-4">
-        <div className="mb-2 text-sm font-semibold text-gray-700">Installation</div>
-        <div className="relative overflow-auto rounded-md bg-[#2d2d2d] p-4">
-          <SyntaxHighlighter
-            language={currentConfig.installCommand}
-            style={tomorrow}
-            customStyle={{
-              margin: 0,
-              padding: 0,
-              background: 'transparent',
-              fontSize: '0.875rem',
-            }}
-            showLineNumbers={false}
-          >
-            {currentConfig.installation}
-          </SyntaxHighlighter>
-        </div>
-      </div>
-
       {/* Second row: Integrations */}
       <div className="mb-4 flex flex-wrap gap-2">
         {currentConfig.integrations.map((integration, index) => (
@@ -442,54 +673,123 @@ export function CodeUsageComponent() {
         ))}
       </div>
 
-      {/* Code block */}
-      <div className="relative overflow-auto rounded-lg bg-[#2d2d2d] shadow-lg">
-        {/* Copy button */}
-        <button
-          onClick={handleCopy}
-          className="absolute right-4 top-4 z-10 cursor-pointer rounded-md bg-gray-700 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-gray-600"
-        >
-          {copied ? (
-            <span className="flex items-center gap-1">
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-              Copied!
-            </span>
-          ) : (
-            <span className="flex items-center gap-1">
-              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                />
-              </svg>
-              Copy
-            </span>
-          )}
-        </button>
+      {/* Third row: Installation Methods (only if multiple methods exist) */}
+      {hasMultipleInstallMethods && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          {(currentConfig.installation as InstallationMethod[]).map((method, index) => (
+            <button
+              key={index}
+              onClick={() => handleInstallMethodChange(index)}
+              className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                selectedInstallMethod === index
+                  ? 'bg-blue-100 text-blue-700 ring-2 ring-blue-600'
+                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              {method.label}
+            </button>
+          ))}
+        </div>
+      )}
 
-        {/* Syntax highlighted code */}
-        <div className="m-0 rounded-lg p-6 pr-20 text-sm leading-6">
+      {/* Installation section */}
+      <div className="mb-4 overflow-hidden rounded-lg bg-gray-50 p-4">
+        <div className="mb-2 text-sm font-semibold text-gray-700">Installation</div>
+        <div className="relative overflow-auto rounded-md bg-[#2d2d2d] p-4">
           <SyntaxHighlighter
-            language={currentIntegration.language}
+            language={
+              hasMultipleInstallMethods
+                ? (currentConfig.installation as InstallationMethod[])[selectedInstallMethod]
+                    .language
+                : currentConfig.installCommand
+            }
             style={tomorrow}
             customStyle={{
               margin: 0,
               padding: 0,
               background: 'transparent',
+              fontSize: '0.875rem',
             }}
             showLineNumbers={false}
           >
-            {currentIntegration.code}
+            {getInstallationCommand()}
           </SyntaxHighlighter>
+        </div>
+      </div>
+
+      {/* Configuration section (only if configuration exists) */}
+      {hasConfiguration && (
+        <div className="mb-4 overflow-hidden rounded-lg bg-gray-50 p-4">
+          <div className="mb-2 text-sm font-semibold text-gray-700">Configuration</div>
+          <div className="relative overflow-auto rounded-md bg-[#2d2d2d] p-4">
+            <SyntaxHighlighter
+              language={currentIntegration.language}
+              style={tomorrow}
+              customStyle={{
+                margin: 0,
+                padding: 0,
+                background: 'transparent',
+                fontSize: '0.875rem',
+              }}
+              showLineNumbers={false}
+            >
+              {getConfiguration()}
+            </SyntaxHighlighter>
+          </div>
+        </div>
+      )}
+
+      {/* Usage section */}
+      <div className="mb-4 overflow-hidden rounded-lg bg-gray-50 p-4">
+        <div className="mb-2 text-sm font-semibold text-gray-700">Usage</div>
+        <div className="relative overflow-auto rounded-lg bg-[#2d2d2d] shadow-lg">
+          {/* Copy button */}
+          <button
+            onClick={handleCopy}
+            className="absolute right-4 top-4 z-10 cursor-pointer rounded-md bg-gray-700 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-gray-600"
+          >
+            {copied ? (
+              <span className="flex items-center gap-1">
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                Copied!
+              </span>
+            ) : (
+              <span className="flex items-center gap-1">
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                  />
+                </svg>
+                Copy
+              </span>
+            )}
+          </button>
+
+          {/* Syntax highlighted code */}
+          <div className="m-0 rounded-lg p-6 pr-20 text-sm leading-6">
+            <SyntaxHighlighter
+              language={currentIntegration.language}
+              style={tomorrow}
+              customStyle={{
+                margin: 0,
+                padding: 0,
+                background: 'transparent',
+              }}
+              showLineNumbers={false}
+            >
+              {currentCode}
+            </SyntaxHighlighter>
+          </div>
         </div>
       </div>
     </div>

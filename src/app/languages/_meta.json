@@ -1,6 +1,7 @@
 {
   "python": "Python",
   "go": "Go",
+  "java": "Java",
   "*": {
     "theme": {
       "sidebar": true

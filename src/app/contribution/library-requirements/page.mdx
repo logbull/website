@@ -150,7 +150,7 @@ Context allows attaching persistent fields to all subsequent logs:
 
 ```python
 # Python example
-base_logger = LogBullLogger(project_id="...", host="...")
+base_logger = LogBullLogger(host="...", project_id="...")
 request_logger = base_logger.with_context({"request_id": "req_123"})
 request_logger.info("Processing started")  # Includes request_id
 ```
@@ -209,8 +209,8 @@ Library should not include dependencies on third-party libraries (only for dev a
 ```python
 # Initialization
 logger = LogBullLogger(
-    project_id="uuid-here",
     host="http://localhost:4005",
+    project_id="uuid-here",
     api_key="optional-key",
     log_level="INFO"
 )
@@ -235,8 +235,8 @@ from logbull import LogBullHandler
 
 logger = logging.getLogger(__name__)
 handler = LogBullHandler(
-    project_id="uuid-here",
-    host="http://localhost:4005"
+    host="http://localhost:4005",
+    project_id="uuid-here"
 )
 logger.addHandler(handler)
 
@@ -251,7 +251,7 @@ from loguru import logger
 from logbull import LoguruSink
 
 logger.add(
-    LoguruSink(project_id="uuid-here", host="http://localhost:4005"),
+    LoguruSink(host="http://localhost:4005", project_id="uuid-here"),
     level="INFO"
 )
 

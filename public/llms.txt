@@ -4,7 +4,7 @@ Log Bull is a free, open-source, self-hosted log collection and viewing system d
 
 ## Key Features
 - Zero-config setup - just run Docker and start logging
-- Multi-language support: Python, Go, Java, JavaScript, PHP, Ruby, and more
+- Multi-language support: Python, Go, Java, JavaScript, and more
 - Self-hosted - all data stays on your infrastructure
 - Multiple projects support - install once, use for all applications
 - User access management and audit logs
@@ -31,9 +31,12 @@ https://logbull.com/languages/python/
 For Go integration examples with structured logging, visit:
 https://logbull.com/languages/go/
 
+### Java
+For Java integration examples with SLF4J, Logback, and Spring Boot, visit:
+https://logbull.com/languages/java/
+
 ### Other Languages
 Log Bull supports any language that can send HTTP requests, including:
-- Java (Log4j, Logback, SLF4J)
 - Node.js (Winston, Bunyan)
 - C#/.NET (Serilog, NLog)
 - PHP (Monolog)
@@ -52,6 +55,7 @@ Log Bull supports any language that can send HTTP requests, including:
 - Installation guide: https://logbull.com/installation/
 - Python examples: https://logbull.com/languages/python/
 - Go examples: https://logbull.com/languages/go/
+- Java examples: https://logbull.com/languages/java/
 
 ## Contributing
 For contribution guidelines, visit:
