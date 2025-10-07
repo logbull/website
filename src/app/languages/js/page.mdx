@@ -1,0 +1,267 @@
+---
+title: JavaScript/TypeScript Integration - Log Bull Documentation
+description: Learn how to integrate Log Bull with JavaScript and TypeScript applications. Multiple integration options including Winston, Pino, Express.js, and Fastify.
+---
+
+# JavaScript/TypeScript
+
+LogBull JavaScript/TypeScript library provides multiple integration options for sending logs to your LogBull server.
+
+**GitHub Repository:** [logbull-js](https://github.com/logbull/logbull-js)
+
+## Installation
+
+```bash
+npm install logbull
+```
+
+This single package includes everything you need: the standalone logger, Winston transport, and Pino transport.
+
+## Quick Start
+
+The fastest way to start using LogBull is with the standalone logger:
+
+```typescript
+import { LogBullLogger, LogLevel } from 'logbull';
+
+const logger = new LogBullLogger({
+  host: 'http://LOGBULL_HOST',
+  projectId: 'LOGBULL_PROJECT_ID',
+  apiKey: 'YOUR_API_KEY', // optional
+  logLevel: LogLevel.INFO,
+});
+
+logger.info('User logged in successfully', {
+  user_id: '12345',
+  username: 'john_doe',
+  ip: '192.168.1.100',
+});
+```
+
+## Usage Examples
+
+### 1. Standalone Logger
+
+```typescript
+import { LogBullLogger, LogLevel } from 'logbull';
+
+// Initialize logger
+const logger = new LogBullLogger({
+  host: 'http://LOGBULL_HOST',
+  projectId: 'LOGBULL_PROJECT_ID',
+  apiKey: 'YOUR_API_KEY',
+  logLevel: LogLevel.INFO,
+});
+
+// Basic logging
+logger.info('User logged in successfully', {
+  user_id: '12345',
+  username: 'john_doe',
+  ip: '192.168.1.100',
+});
+
+logger.error('Database connection failed', {
+  database: 'users_db',
+  error_code: 500,
+});
+
+// Context management
+const sessionLogger = logger.withContext({
+  session_id: 'sess_abc123',
+  user_id: 'user_456',
+});
+
+sessionLogger.info('Processing request', {
+  action: 'purchase',
+});
+```
+
+#### Context Management
+
+```typescript
+// Attach persistent context to all subsequent logs
+const sessionLogger = logger.withContext({
+  session_id: 'sess_abc123',
+  user_id: 'user_456',
+  request_id: 'req_789',
+});
+
+// All logs from sessionLogger include the context automatically
+sessionLogger.info('User started checkout process', {
+  cart_items: 3,
+  total_amount: 149.99,
+});
+// Output includes: session_id, user_id, request_id + cart_items, total_amount
+
+sessionLogger.error('Payment processing failed', {
+  payment_method: 'credit_card',
+  error_code: 'DECLINED',
+});
+
+// Context can be chained
+const transactionLogger = sessionLogger.withContext({
+  transaction_id: 'txn_xyz789',
+  merchant_id: 'merchant_123',
+});
+
+transactionLogger.info('Transaction completed', {
+  amount: 149.99,
+  currency: 'USD',
+});
+// Includes all previous context + new transaction context
+```
+
+### 2. Winston Integration
+
+```typescript
+import { LogBullTransport } from 'logbull';
+import winston from 'winston';
+
+// Create Winston logger with LogBull transport
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.Console(),
+    new LogBullTransport({
+      host: 'http://LOGBULL_HOST',
+      projectId: 'LOGBULL_PROJECT_ID',
+      apiKey: 'YOUR_API_KEY',
+    }),
+  ],
+});
+
+// Use standard Winston logging
+logger.info('User action', {
+  user_id: '12345',
+  action: 'login',
+  ip: '192.168.1.100',
+});
+
+logger.error('Payment failed', {
+  order_id: 'ord_123',
+  amount: 99.99,
+  currency: 'USD',
+});
+
+// Winston child logger (context)
+const requestLogger = logger.child({
+  request_id: 'req_789',
+  session_id: 'sess_456',
+});
+
+requestLogger.info('Request started');
+requestLogger.info('Request completed', { duration_ms: 250 });
+```
+
+### 3. Pino Integration
+
+```typescript
+import { createPinoTransport } from 'logbull';
+import pino from 'pino';
+
+// Create Pino logger with LogBull transport
+const transport = createPinoTransport({
+  host: 'http://LOGBULL_HOST',
+  projectId: 'LOGBULL_PROJECT_ID',
+  apiKey: 'YOUR_API_KEY',
+});
+
+const logger = pino({ level: 'info' }, transport);
+
+// Use standard Pino logging
+logger.info(
+  {
+    user_id: '12345',
+    action: 'login',
+    ip: '192.168.1.100',
+  },
+  'User action',
+);
+
+logger.error(
+  {
+    order_id: 'ord_123',
+    amount: 99.99,
+    currency: 'USD',
+  },
+  'Payment failed',
+);
+
+// Pino child logger (context)
+const requestLogger = logger.child({
+  request_id: 'req_789',
+  session_id: 'sess_456',
+});
+
+requestLogger.info('Request started');
+requestLogger.info({ duration_ms: 250 }, 'Request completed');
+```
+
+## Configuration Options
+
+### LogBullLogger Parameters
+
+- `projectId` (required): Your LogBull project ID (UUID format)
+- `host` (required): LogBull server URL
+- `apiKey` (optional): API key for authentication
+- `logLevel` (optional): Minimum log level to process (default: `INFO`)
+
+### Available Log Levels
+
+```typescript
+enum LogLevel {
+  DEBUG = 'DEBUG',
+  INFO = 'INFO',
+  WARNING = 'WARNING',
+  ERROR = 'ERROR',
+  CRITICAL = 'CRITICAL',
+}
+```
+
+## API Reference
+
+### LogBullLogger Methods
+
+- `debug(message: string, fields?: Record<string, any>)`: Log debug message
+- `info(message: string, fields?: Record<string, any>)`: Log info message
+- `warning(message: string, fields?: Record<string, any>)`: Log warning message
+- `error(message: string, fields?: Record<string, any>)`: Log error message
+- `critical(message: string, fields?: Record<string, any>)`: Log critical message
+- `withContext(context: Record<string, any>): LogBullLogger`: Create new logger with additional context
+- `flush()`: Immediately send all queued logs
+- `shutdown(): Promise<void>`: Stop background processing and send remaining logs
+
+### LogBullTransport (Winston)
+
+#### Methods
+
+- `log(info: any, callback: () => void)`: Winston log method (called automatically)
+- `flush()`: Immediately send all queued logs
+- `close()`: Close the transport
+- `shutdown(): Promise<void>`: Stop and send remaining logs
+
+### LogBullPinoTransport (Pino)
+
+#### Methods
+
+- `flush()`: Immediately send all queued logs
+- `shutdown(): Promise<void>`: Stop and send remaining logs
+
+#### Functions
+
+- `createPinoTransport(config: Config)`: Create a Pino transport stream
+
+## Features
+
+- **Multiple integration options**: Standalone logger, Winston transport, and Pino transport
+- **Context support**: Attach persistent context to logs (session_id, user_id, etc.)
+- **Type-safe**: Full TypeScript support with comprehensive type definitions
+- **Framework integration**: Easy integration with Express.js, Fastify, and other Node.js frameworks
+
+## Requirements
+
+- **Node.js**: 16.0.0 or higher
+- **TypeScript**: 5.0.0 or higher (for TypeScript projects)
+
+For Node.js 18+, native `fetch` is used. For older versions, the built-in `https` module is used.

@@ -496,13 +496,128 @@ public class Application {
     ],
   },
   JavaScript: {
-    installation: 'Coming soon',
-    installCommand: 'text',
+    installation: 'npm install logbull',
+    installCommand: 'bash',
     integrations: [
       {
-        label: 'Coming Soon',
-        language: 'text',
-        code: 'JavaScript integration is coming soon!\n\nStay tuned for updates.',
+        label: 'LogBull',
+        language: 'typescript',
+        code: `import { LogBullLogger, LogLevel } from "logbull";
+
+// Initialize logger
+const logger = new LogBullLogger({
+  host: "http://LOGBULL_HOST_PLACEHOLDER",
+  projectId: "LOGBULL_PROJECT_ID_PLACEHOLDER",
+  apiKey: "LOGBULL_API_KEY_PLACEHOLDER", // optional
+  logLevel: LogLevel.INFO,
+});
+
+// Basic logging
+logger.info("User logged in successfully", {
+  user_id: "12345",
+  username: "john_doe",
+  ip: "192.168.1.100",
+});
+
+logger.error("Database connection failed", {
+  database: "users_db",
+  error_code: 500,
+});
+
+// Context management
+const sessionLogger = logger.withContext({
+  session_id: "sess_abc123",
+  user_id: "user_456",
+});
+
+sessionLogger.info("Processing request", {
+  action: "purchase",
+});`,
+      },
+      {
+        label: 'Winston',
+        language: 'typescript',
+        code: `import winston from "winston";
+import { LogBullTransport } from "logbull";
+
+// Create Winston logger with LogBull transport
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.Console(),
+    new LogBullTransport({
+      host: "http://LOGBULL_HOST_PLACEHOLDER",
+      projectId: "LOGBULL_PROJECT_ID_PLACEHOLDER",
+      apiKey: "LOGBULL_API_KEY_PLACEHOLDER", // optional
+    }),
+  ],
+});
+
+// Use standard Winston logging
+logger.info("User action", {
+  user_id: "12345",
+  action: "login",
+  ip: "192.168.1.100",
+});
+
+logger.error("Payment failed", {
+  order_id: "ord_123",
+  amount: 99.99,
+  currency: "USD",
+});
+
+// Winston child logger (context)
+const requestLogger = logger.child({
+  request_id: "req_789",
+  session_id: "sess_456",
+});
+
+requestLogger.info("Request started");
+requestLogger.info("Request completed", { duration_ms: 250 });`,
+      },
+      {
+        label: 'Pino',
+        language: 'typescript',
+        code: `import pino from "pino";
+import { createPinoTransport } from "logbull";
+
+// Create Pino logger with LogBull transport
+const transport = createPinoTransport({
+  host: "http://LOGBULL_HOST_PLACEHOLDER",
+  projectId: "LOGBULL_PROJECT_ID_PLACEHOLDER",
+  apiKey: "LOGBULL_API_KEY_PLACEHOLDER", // optional
+});
+
+const logger = pino({ level: "info" }, transport);
+
+// Use standard Pino logging
+logger.info(
+  {
+    user_id: "12345",
+    action: "login",
+    ip: "192.168.1.100",
+  },
+  "User action"
+);
+
+logger.error(
+  {
+    order_id: "ord_123",
+    amount: 99.99,
+    currency: "USD",
+  },
+  "Payment failed"
+);
+
+// Pino child logger (context)
+const requestLogger = logger.child({
+  request_id: "req_789",
+  session_id: "sess_456",
+});
+
+requestLogger.info("Request started");
+requestLogger.info({ duration_ms: 250 }, "Request completed");`,
       },
     ],
   },

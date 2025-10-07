@@ -624,6 +624,15 @@ export default function HomePage() {
                 </a>
               </li>
               <li className="flex items-center">
+                <span className="mr-3 text-emerald-600">•</span>
+                <a
+                  href="/languages/js/"
+                  className="text-emerald-600 underline decoration-emerald-600 underline-offset-2 transition-colors hover:text-emerald-700"
+                >
+                  JavaScript
+                </a>
+              </li>
+              <li className="flex items-center">
                 <span className="mr-3 text-gray-400">•</span>
                 <span className="text-gray-400">Other coming soon...</span>
               </li>

@@ -55,7 +55,7 @@ All library implementations must support these configuration parameters:
 
 - **level**: Uppercase string (DEBUG, INFO, WARNING, ERROR, CRITICAL)
 - **message**: Non-empty string, max 10,000 characters
-- **timestamp**: RFC3339Nano format with nanosecond precision, must be unique and increasing to ensure correct order of logs
+- **timestamp**: RFC3339Nano format with nanosecond precision in UTC timezone (e.g., `2025-01-15T10:30:45.123456789Z`), must be unique and increasing to ensure correct order of logs
 - **fields**: Object/map with custom key-value pairs (max 100 fields)
 
 ### Field constraints
@@ -123,10 +123,7 @@ X-API-Key: {api_key}  # Optional, if configured
 - HTTP errors: Log error message, log sending entry to stderr/console, mark batch as failed
 - Server errors (5xx) or network errors: Consider retry with exponential backoff (max 3 tries), print error message to stderr/console
 - Client errors (4xx): Log error, do not retry (likely configuration issue), print error message to stderr/console
-- **Rejected logs**: If server response indicates rejected logs (`rejected > 0`), print detailed information about each rejected log to stderr/console, including:
-  - The rejection reason from the `errors` array
-  - The rejected log's content (level, message, timestamp, fields)
-  - The index of the rejected log in the batch
+- **Rejected logs**: If server response indicates rejected logs (`rejected > 0`), see section "8. Rejected logs output" for detailed requirements
 
 ## Core features
 
@@ -166,6 +163,7 @@ request_logger.info("Processing started")  # Includes request_id
 - Use nanosecond precision timestamps
 - Ensure monotonic timestamps (each timestamp must be unique and increasing)
 - Format: RFC3339Nano (e.g., `2025-01-15T10:30:45.123456789Z`)
+- **All timestamps must be in UTC timezone** (indicated by `Z` suffix)
 - Use thread-safe timestamp generation
 
 ### 5. Resource management
@@ -197,6 +195,32 @@ Standalone logger should print logs to console in addition to sending them:
 - Print before queuing for sending
 - Include timestamp, level, message, and fields
 - Use stderr for ERROR/CRITICAL levels (language-specific best practice)
+
+### 8. Rejected logs output
+
+When server response indicates rejected logs (`rejected > 0`), print detailed information about each rejected log to stderr/console:
+
+**Example output:**
+
+```
+LogBull: Rejected 1 log entries
+LogBull: Rejected log details:
+  - Log #5 rejected (Invalid log level):
+    Level: INVALID
+    Message: Test message
+    Timestamp: 2025-01-15T10:30:45.123456789Z
+    Fields: {"user_id": "123"}
+```
+
+**Requirements:**
+
+- Print number of rejected logs
+- For each rejected log, include:
+  - Index in the batch (0-based)
+  - Rejection reason from server
+  - Full log content (level, message, timestamp, fields)
+- Only print when server successfully processes the request but rejects specific logs
+- Do not print for network errors or HTTP errors (those should be handled separately)
 
 ### Library
 

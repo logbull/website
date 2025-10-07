@@ -2,6 +2,7 @@
   "python": "Python",
   "go": "Go",
   "java": "Java",
+  "js": "JavaScript/TypeScript",
   "*": {
     "theme": {
       "sidebar": true

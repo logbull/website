@@ -35,9 +35,12 @@ https://logbull.com/languages/go/
 For Java integration examples with SLF4J, Logback, and Spring Boot, visit:
 https://logbull.com/languages/java/
 
+### JavaScript/TypeScript
+For JavaScript and TypeScript integration examples with Winston, Pino, Express.js, and Fastify, visit:
+https://logbull.com/languages/js/
+
 ### Other Languages
 Log Bull supports any language that can send HTTP requests, including:
-- Node.js (Winston, Bunyan)
 - C#/.NET (Serilog, NLog)
 - PHP (Monolog)
 - Ruby
@@ -56,6 +59,7 @@ Log Bull supports any language that can send HTTP requests, including:
 - Python examples: https://logbull.com/languages/python/
 - Go examples: https://logbull.com/languages/go/
 - Java examples: https://logbull.com/languages/java/
+- JavaScript/TypeScript examples: https://logbull.com/languages/js/
 
 ## Contributing
 For contribution guidelines, visit:
