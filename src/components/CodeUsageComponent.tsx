@@ -27,7 +27,23 @@ type LanguageConfig = {
 
 const languageConfigs: Record<Language, LanguageConfig> = {
   Python: {
-    installation: 'pip install logbull',
+    installation: [
+      {
+        label: 'pip',
+        language: 'bash',
+        command: 'pip install logbull',
+      },
+      {
+        label: 'uv',
+        language: 'bash',
+        command: 'uv add logbull',
+      },
+      {
+        label: 'poetry',
+        language: 'bash',
+        command: 'poetry add logbull',
+      },
+    ],
     installCommand: 'bash',
     integrations: [
       {
@@ -496,7 +512,28 @@ public class Application {
     ],
   },
   JavaScript: {
-    installation: 'npm install logbull',
+    installation: [
+      {
+        label: 'npm',
+        language: 'bash',
+        command: 'npm install logbull',
+      },
+      {
+        label: 'pnpm',
+        language: 'bash',
+        command: 'pnpm add logbull',
+      },
+      {
+        label: 'yarn',
+        language: 'bash',
+        command: 'yarn add logbull',
+      },
+      {
+        label: 'bun',
+        language: 'bash',
+        command: 'bun add logbull',
+      },
+    ],
     installCommand: 'bash',
     integrations: [
       {
@@ -846,7 +883,7 @@ export function CodeUsageComponent({
   };
 
   return (
-    <div className="mx-auto max-w-[900px]">
+    <div className="mx-auto">
       {/* First row: Languages */}
       <div className="mb-4 flex flex-wrap gap-2">
         {languages.map((lang) => (

@@ -88,6 +88,8 @@ Then run:
 docker compose up -d
 ```
 
+Keep in mind that start up can take up to ~2 minutes.
+
 ---
 
 ## Getting started
@@ -101,3 +103,14 @@ After installation:
 5. **Manage your setup**: Add team members, adjust limits, and configure settings if needed
 
 ---
+
+## How to update Log Bull?
+
+To update Log Bull, you need to stop it, clean up Docker cache and restart the container.
+
+1) Go to the directory where Log Bull is installed (usually `/opt/logbull`)
+2) Stop the container: `docker compose stop`
+3) Clean up Docker cache: `docker system prune -a`
+4) Restart the container: `docker compose up -d`
+
+It will get the latest version of Log Bull from the Docker Hub (if you have not fixed the version in the `docker-compose.yml` file).

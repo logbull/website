@@ -21,6 +21,10 @@ Quick install options:
 2. Docker run command
 3. Docker Compose setup
 
+## Configuration and Settings
+For information about configuring user roles, security policies, rate limiting, and data retention, visit:
+https://logbull.com/settings/
+
 ## Language Examples and Integration
 
 ### Python
@@ -60,6 +64,7 @@ Log Bull supports any language that can send HTTP requests, including:
 - GitHub repository: https://github.com/logbull/logbull
 - Community: https://t.me/logbull_community
 - Installation guide: https://logbull.com/installation/
+- Settings and configuration: https://logbull.com/settings/
 - Python examples: https://logbull.com/languages/python/
 - Go examples: https://logbull.com/languages/go/
 - Java examples: https://logbull.com/languages/java/

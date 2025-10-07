@@ -1,0 +1,76 @@
+---
+title: Settings and Configuration - Log Bull Documentation
+description: Configure Log Bull user roles, project settings, security policies, rate limiting, and data retention. Learn how to manage access control and optimize your log collection system.
+---
+
+# Settings
+
+Log Bull does not have a lot of settings. Actually, it only allows you to control:
+
+- Who can sign up in your Log Bull instance
+- Who can create projects
+- Who can send logs to you (via API keys and origins)
+- How many logs to store
+
+## Users roles
+
+All users in Log Bull have roles <u>within system</u>:
+
+- **Admin** - can manage all settings and users in the system as well as create projects
+- **Member** - can create projects (if it is allowed by global settings)
+
+<u>Within project</u> there are also roles:
+
+- **Owner** - can manage all settings, users and admins of the project as well as view logs
+- **Admin** - can manage all settings, non-admin users in the project and view logs
+- **Member** - can view logs
+
+## Global settings
+
+In global settings there are 3 properties:
+
+1. **Allow external registrations** - by default, all users can sign up to your Log Bull (but they still do not have access to any projects until they are invited or create their own projects).
+
+   If you want to allow only invited users to sign up, you can disable this option. In this case, sign up form will be closed until you invite the user to any of projects.
+
+   To invite the users to the project, you need to click "Add user" and enter email. After this case, the user with this email will be able to pass sign up.
+
+2. **Allow member invitations** - this settings is needed when external registrations are disabled.
+
+   Imagine you already have some users and you know they are reliable (for example, your team). You want to allow them to invite other users to join Log Bull. In this case, you can enable this option and they will be able to invite other users to join projects via invitations.
+
+   If it is disabled, only admins can invite users.
+
+3. **Allow member project creation** - by default, all members can create their own projects. If you want to allow only admins to create projects, you can disable this option.
+
+## Project settings
+
+Project settings allow you to configure security policies, rate limiting and data retention for each individual project.
+
+### Security policies
+
+Project security policies control how logs can be ingested into your project:
+
+1. **Require API key** - when enabled, all log requests must include a valid API key.
+
+2. **Filter by domain** - when enabled, only requests from allowed domains or will be accepted (for example, your website domain).
+
+3. **Filter by IP address** - when enabled, only requests from allowed IP addresses will be accepted (for example, your servers IPs).
+
+### Rate limiting & quotas
+
+These settings help you control resource usage and prevent abuse:
+
+1. **Logs per second limit** - maximum logs that can be ingested per second (default: 1 000). This prevents overwhelming the system with too many logs at once.
+
+2. **Maximum log size (KB)** - maximum size allowed for a single log entry (default: 64 KB). Logs exceeding this size will be rejected.
+
+3. **Maximum logs amount** - maximum total number of logs that can be stored in the project (default: 100 000 000). Once this limit is reached, the oldest logs will be deleted to keep the limit.
+
+4. **Maximum storage size (MB)** - maximum total storage size for all logs in the project (default: 100 000 MB or ~100 GB). This prevents a single project from consuming excessive storage space. Once this limit is reached, the oldest logs will be deleted to keep the limit.
+
+5. **Log retention (days)** - how long logs should be kept before automatic deletion (default: 180 days). Logs older than this will be automatically removed from the system.
+
+These quotas help you manage costs and ensure that your Log Bull instance remains performant and within your infrastructure limits.
+
+Keep these limits as low as possible. Log Bull is not designed to store a hundreds of TBs of logs (at least, we have not tested it yet).

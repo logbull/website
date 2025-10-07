@@ -589,7 +589,9 @@ export default function HomePage() {
             </p>
           </div>
 
-          <CodeUsageComponent />
+          <div className="max-w-[900px]">
+            <CodeUsageComponent />
+          </div>
 
           <div className="mx-auto mt-12 max-w-[900px]">
             <p className="mb-4 text-lg text-gray-600">
