@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
-type Language = 'Python' | 'Go' | 'Java' | 'PHP' | 'JavaScript' | 'Ruby';
+type Language = 'Python' | 'Go' | 'Java' | 'PHP' | 'JavaScript' | 'Ruby' | 'cURL' | 'C#' | 'Rust';
 
 type Integration = {
   label: string;
@@ -632,9 +632,102 @@ requestLogger.info({ duration_ms: 250 }, "Request completed");`,
       },
     ],
   },
+  'C#': {
+    installation: 'Coming soon',
+    installCommand: 'text',
+    integrations: [
+      {
+        label: 'Coming Soon',
+        language: 'text',
+        code: 'C# integration is coming soon!\n\nStay tuned for updates.',
+      },
+    ],
+  },
+  Rust: {
+    installation: 'Coming soon',
+    installCommand: 'text',
+    integrations: [
+      {
+        label: 'Coming Soon',
+        language: 'text',
+        code: 'Rust integration is coming soon!\n\nStay tuned for updates.',
+      },
+    ],
+  },
+  cURL: {
+    installation: '',
+    installCommand: 'bash',
+    integrations: [
+      {
+        label: 'Basic',
+        language: 'bash',
+        code: `curl -X POST "http://LOGBULL_HOST_PLACEHOLDER/api/v1/logs/receiving/LOGBULL_PROJECT_ID_PLACEHOLDER" \\
+  -H "Content-Type: application/json" \\
+  -H "X-API-Key: LOGBULL_API_KEY_PLACEHOLDER" \\
+  -d '{
+    "logs": [
+      {
+        "level": "INFO",
+        "message": "User logged in successfully",
+        "fields": {
+          "user_id": "12345",
+          "username": "john_doe",
+          "ip": "192.168.1.100"
+        }
+      }
+    ]
+  }'`,
+      },
+      {
+        label: 'Multiple logs',
+        language: 'bash',
+        code: `curl -X POST "http://LOGBULL_HOST_PLACEHOLDER/api/v1/logs/receiving/LOGBULL_PROJECT_ID_PLACEHOLDER" \\
+  -H "Content-Type: application/json" \\
+  -H "X-API-Key: LOGBULL_API_KEY_PLACEHOLDER" \\
+  -d '{
+    "logs": [
+      {
+        "level": "INFO",
+        "message": "Request received",
+        "fields": {
+          "path": "/api/users",
+          "method": "POST"
+        }
+      },
+      {
+        "level": "INFO",
+        "message": "Database query executed",
+        "fields": {
+          "query": "INSERT INTO users",
+          "duration_ms": 45
+        }
+      },
+      {
+        "level": "INFO",
+        "message": "Request completed",
+        "fields": {
+          "status_code": 201,
+          "duration_ms": 120
+        }
+      }
+    ]
+  }'`,
+      },
+    ],
+  },
 };
 
-const languages: Language[] = ['Python', 'Go', 'Java', 'JavaScript', 'PHP', 'Ruby'];
+const languages: Language[] = [
+  'cURL',
+  'Python',
+  'Go',
+  'Java',
+  'JavaScript',
+  'C#',
+  'PHP',
+  'Ruby',
+  'Rust',
+];
 
 interface Props {
   logbullHost?: string;
@@ -808,29 +901,31 @@ export function CodeUsageComponent({
       )}
 
       {/* Installation section */}
-      <div className="mb-4 overflow-hidden rounded-lg bg-gray-50 p-4">
-        <div className="mb-2 text-sm font-semibold text-gray-700">Installation</div>
-        <div className="relative overflow-auto rounded-md bg-[#2d2d2d] p-4">
-          <SyntaxHighlighter
-            language={
-              hasMultipleInstallMethods
-                ? (currentConfig.installation as InstallationMethod[])[selectedInstallMethod]
-                    .language
-                : currentConfig.installCommand
-            }
-            style={tomorrow}
-            customStyle={{
-              margin: 0,
-              padding: 0,
-              background: 'transparent',
-              fontSize: '0.875rem',
-            }}
-            showLineNumbers={false}
-          >
-            {getInstallationCommand()}
-          </SyntaxHighlighter>
+      {getInstallationCommand() && (
+        <div className="mb-4 overflow-hidden rounded-lg bg-gray-50 p-4">
+          <div className="mb-2 text-sm font-semibold text-gray-700">Installation</div>
+          <div className="relative overflow-auto rounded-md bg-[#2d2d2d] p-4">
+            <SyntaxHighlighter
+              language={
+                hasMultipleInstallMethods
+                  ? (currentConfig.installation as InstallationMethod[])[selectedInstallMethod]
+                      .language
+                  : currentConfig.installCommand
+              }
+              style={tomorrow}
+              customStyle={{
+                margin: 0,
+                padding: 0,
+                background: 'transparent',
+                fontSize: '0.875rem',
+              }}
+              showLineNumbers={false}
+            >
+              {getInstallationCommand()}
+            </SyntaxHighlighter>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Configuration section (only if configuration exists) */}
       {hasConfiguration && (

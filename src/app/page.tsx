@@ -7,7 +7,7 @@ import { InstallationComponent } from '@/components/InstallationComponent';
 export const metadata: Metadata = {
   title: 'Log Bull - simple log collection and view system',
   description:
-    'Log Bull is a simple log collection and view system. Self hosted, zero-config, support of languages (Python, Go, Java, Ruby, Rust, etc.). Simple alternative to ELK and Loki',
+    'Self-hosted log collection system. Zero-config. Supports Python, Go, Java, JavaScript, C#, PHP and other languages. Simple alternative to ELK and Loki.',
   keywords: [
     'log collection',
     'log management',
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     url: 'https://logbull.com',
     title: 'Log Bull - simple log collection and view system',
     description:
-      'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simple alternative to ELK and Loki.',
+      'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, JavaScript, C#, PHP and other languages). Simple alternative to ELK and Loki.',
     siteName: 'Log Bull',
     locale: 'en_US',
   },
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Log Bull - simple log collection and view system',
     description:
-      'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simple alternative to ELK and Loki.',
+      'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, JavaScript, C#, PHP and other languages). Simple alternative to ELK and Loki.',
   },
   applicationName: 'Log Bull',
   appleWebApp: {
@@ -67,7 +67,7 @@ export default function HomePage() {
             '@type': 'SoftwareApplication',
             name: 'Log Bull',
             description:
-              'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#). Simple alternative to ELK and Loki.',
+              'Free and open source log collection system. Self-hosted, zero-config, supports multiple languages (Python, Go, Java, JavaScript, C#, PHP and other languages). Simple alternative to ELK and Loki.',
             url: 'https://logbull.com',
             applicationCategory: 'DeveloperApplication',
             operatingSystem: 'Linux, Windows, macOS',
@@ -83,7 +83,7 @@ export default function HomePage() {
             featureList: [
               'Simple log collection',
               'Zero-config setup',
-              'Multi-language support (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#)',
+              'Multi-language support (Python, Go, Java, JavaScript, C#, PHP, Ruby, Rust)',
               'Self-hosted via Docker',
               'Open source and free',
               'Multiple project support',
@@ -144,7 +144,7 @@ export default function HomePage() {
                 name: 'What is Log Bull and why should I use it instead of ELK or Loki?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: 'Log Bull is an Apache 2.0 licensed, self-hosted log collection system designed for developers and small teams. Unlike ELK (Elasticsearch, Logstash, Kibana) or Loki which require complex configurations, significant resources (multiple services, heavy memory usage), and extensive setup time, Log Bull works out of the box with zero configuration and runs as a single lightweight Docker container. The system supports multiple programming languages (Python, Go, Java, Ruby, Rust, PHP, Node.js, C#) and can be installed with a single Docker command in under 2 minutes.',
+                  text: 'Log Bull is an Apache 2.0 licensed, self-hosted log collection system designed for developers and small teams. Unlike ELK (Elasticsearch, Logstash, Kibana) or Loki which require complex configurations, significant resources (multiple services, heavy memory usage), and extensive setup time, Log Bull works out of the box with zero configuration and runs as a single lightweight Docker container. The system supports multiple programming languages (Python, Go, Java, JavaScript, C#, PHP, Ruby, Rust) and can be installed with a single Docker command in under 2 minutes.',
                 },
               },
               {
@@ -160,7 +160,7 @@ export default function HomePage() {
                 name: 'What programming languages and frameworks does Log Bull support?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: "The system supports virtually any language that can send HTTP requests. Officially documented languages include Python (with standard logging), Go (with structured logging), Java (Log4j, Logback, SLF4J), Node.js (Winston, Bunyan), C#/.NET (Serilog, NLog), PHP (Monolog), and Ruby. You don't need to change your existing logging code — just add it as an additional handler to your current logger.",
+                  text: "The system supports virtually any language that can send HTTP requests. Officially documented languages include Python (with standard logging), Go (with structured logging), Java (Log4j, Logback, SLF4J), JavaScript/Node.js (Winston, Pino), C#/.NET (Serilog, NLog), PHP (Monolog), Ruby, and Rust. You don't need to change your existing logging code — just add it as an additional handler to your current logger.",
                 },
               },
               {
@@ -584,8 +584,8 @@ export default function HomePage() {
             </h2>
 
             <p className="mx-auto mt-4 max-w-[800px] text-base text-gray-600 sm:text-lg md:text-xl">
-              Python, Golang, Java, JavaScript, PHP, Ruby and other languages supported as well as
-              popular libraries (so you don&apos;t have to migrate your code)
+              Python, Go, Java, JavaScript, C#, PHP, Ruby, Rust and other languages supported as
+              well as popular libraries (so you don&apos;t have to migrate your code)
             </p>
           </div>
 
@@ -630,6 +630,15 @@ export default function HomePage() {
                   className="text-emerald-600 underline decoration-emerald-600 underline-offset-2 transition-colors hover:text-emerald-700"
                 >
                   JavaScript
+                </a>
+              </li>
+              <li className="flex items-center">
+                <span className="mr-3 text-emerald-600">•</span>
+                <a
+                  href="/languages/curl/"
+                  className="text-emerald-600 underline decoration-emerald-600 underline-offset-2 transition-colors hover:text-emerald-700"
+                >
+                  cURL
                 </a>
               </li>
               <li className="flex items-center">
@@ -688,8 +697,8 @@ export default function HomePage() {
                   which require complex configurations, significant resources (multiple services,
                   heavy memory usage), and extensive setup time, Log Bull works out of the box with
                   zero configuration and runs as a single lightweight Docker container. The system
-                  supports multiple programming languages (Python, Go, Java, Ruby, Rust, PHP,
-                  Node.js, C#) and can be installed with a single Docker command in under 2 minutes.
+                  supports multiple programming languages (Python, Go, Java, JavaScript, C#, PHP,
+                  Ruby, Rust) and can be installed with a single Docker command in under 2 minutes.
                 </p>
               </div>
 
@@ -715,10 +724,10 @@ export default function HomePage() {
                 <p className="max-w-[500px] text-base md:text-lg">
                   The system supports virtually any language that can send HTTP requests. Officially
                   documented languages include Python (with standard logging), Go (with structured
-                  logging), Java (Log4j, Logback, SLF4J), Node.js (Winston, Bunyan), C#/.NET
-                  (Serilog, NLog), PHP (Monolog), and Ruby. You don&apos;t need to change your
-                  existing logging code — just add it as an additional handler to your current
-                  logger.
+                  logging), Java (Log4j, Logback, SLF4J), JavaScript/Node.js (Winston, Pino),
+                  C#/.NET (Serilog, NLog), PHP (Monolog), Ruby, and Rust. You don&apos;t need to
+                  change your existing logging code — just add it as an additional handler to your
+                  current logger.
                 </p>
               </div>
 

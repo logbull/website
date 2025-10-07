@@ -1,0 +1,289 @@
+---
+title: cURL Examples - Log Bull Documentation
+description: Learn how to send logs to Log Bull using cURL or any HTTP client. Direct API examples for testing and custom integrations.
+---
+
+# cURL / HTTP API
+
+Send logs directly to LogBull using HTTP POST requests. Perfect for testing, scripting, or integrating from languages without a native library.
+
+**API Endpoint:** `POST /api/v1/logs/receiving/{projectId}`
+
+## Quick Start
+
+```bash
+curl -X POST "http://LOGBULL_HOST/api/v1/logs/receiving/LOGBULL_PROJECT_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "logs": [
+      {
+        "level": "INFO",
+        "message": "User logged in successfully",
+        "fields": {
+          "user_id": "12345",
+          "username": "john_doe",
+          "ip": "192.168.1.100"
+        }
+      }
+    ]
+  }'
+```
+
+## Basic Examples
+
+### Single Log Entry
+
+```bash
+curl -X POST "http://LOGBULL_HOST/api/v1/logs/receiving/LOGBULL_PROJECT_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "logs": [
+      {
+        "level": "INFO",
+        "message": "Application started"
+      }
+    ]
+  }'
+```
+
+### With API Key Authentication
+
+```bash
+curl -X POST "http://LOGBULL_HOST/api/v1/logs/receiving/LOGBULL_PROJECT_ID" \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: YOUR_API_KEY" \
+  -d '{
+    "logs": [
+      {
+        "level": "INFO",
+        "message": "User logged in successfully",
+        "fields": {
+          "user_id": "12345",
+          "session_id": "sess_abc123"
+        }
+      }
+    ]
+  }'
+```
+
+### Multiple Log Entries (Batch)
+
+```bash
+curl -X POST "http://LOGBULL_HOST/api/v1/logs/receiving/LOGBULL_PROJECT_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "logs": [
+      {
+        "level": "INFO",
+        "message": "Request received",
+        "fields": {
+          "path": "/api/users",
+          "method": "POST"
+        }
+      },
+      {
+        "level": "INFO",
+        "message": "Database query executed",
+        "fields": {
+          "query": "INSERT INTO users",
+          "duration_ms": 45
+        }
+      },
+      {
+        "level": "INFO",
+        "message": "Request completed",
+        "fields": {
+          "status_code": 201,
+          "duration_ms": 120
+        }
+      }
+    ]
+  }'
+```
+
+### Different Log Levels
+
+```bash
+# DEBUG level
+curl -X POST "http://LOGBULL_HOST/api/v1/logs/receiving/LOGBULL_PROJECT_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "logs": [
+      {
+        "level": "DEBUG",
+        "message": "Detailed debugging information",
+        "fields": {
+          "component": "authentication",
+          "step": "token_validation"
+        }
+      }
+    ]
+  }'
+
+# WARNING level
+curl -X POST "http://LOGBULL_HOST/api/v1/logs/receiving/LOGBULL_PROJECT_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "logs": [
+      {
+        "level": "WARN",
+        "message": "Rate limit approaching",
+        "fields": {
+          "current_requests": 950,
+          "limit": 1000
+        }
+      }
+    ]
+  }'
+
+# ERROR level
+curl -X POST "http://LOGBULL_HOST/api/v1/logs/receiving/LOGBULL_PROJECT_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "logs": [
+      {
+        "level": "ERROR",
+        "message": "Database connection failed",
+        "fields": {
+          "database": "users_db",
+          "error": "Connection timeout",
+          "retry_count": 3
+        }
+      }
+    ]
+  }'
+```
+
+### With Custom Timestamp
+
+```bash
+curl -X POST "http://LOGBULL_HOST/api/v1/logs/receiving/LOGBULL_PROJECT_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "logs": [
+      {
+        "level": "INFO",
+        "message": "Historical log entry",
+        "timestamp": "2024-01-15T10:30:00Z",
+        "fields": {
+          "source": "archived_logs"
+        }
+      }
+    ]
+  }'
+```
+
+## Request Format
+
+### Headers
+
+- `Content-Type: application/json` (required)
+- `X-API-Key: YOUR_API_KEY` (optional, required if project has `isApiKeyRequired=true`)
+- `Origin: https://yourdomain.com` (optional, required if project has domain filtering enabled)
+
+### Body Structure
+
+```json
+{
+  "logs": [
+    {
+      "level": "INFO", // Required: DEBUG, INFO, WARN, ERROR, FATAL
+      "message": "Log message", // Required: The log message (max 10,000 chars)
+      "timestamp": "2024-01-15T10:30:00Z", // Optional: ISO 8601 format, auto-generated if omitted
+      "fields": {
+        // Optional: Additional structured data
+        "key1": "value1",
+        "key2": 123,
+        "key3": true
+      }
+    }
+  ]
+}
+```
+
+### Log Levels
+
+- `DEBUG` - Detailed debugging information
+- `INFO` - General informational messages
+- `WARN` - Warning messages
+- `ERROR` - Error messages
+- `FATAL` - Critical/fatal error messages
+
+## Response Format
+
+### Success Response (202 Accepted)
+
+```json
+{
+  "accepted": 3,
+  "rejected": 0,
+  "errors": []
+}
+```
+
+### Partial Success (202 Accepted with errors)
+
+```json
+{
+  "accepted": 2,
+  "rejected": 1,
+  "errors": [
+    {
+      "index": 1,
+      "message": "MESSAGE_EMPTY"
+    }
+  ]
+}
+```
+
+## Error Codes
+
+### HTTP Status Codes
+
+- `202` - Logs accepted (may include partial rejection)
+- `400` - Invalid request format or batch limits exceeded
+- `401` - API key required or invalid
+- `403` - Domain not allowed or IP not allowed
+- `404` - Project not found
+- `413` - Project quota exceeded
+- `429` - Rate limit exceeded
+
+### Validation Error Codes
+
+- `PROJECT_NOT_FOUND` - Project doesn't exist
+- `API_KEY_REQUIRED` - API key is required for this project
+- `API_KEY_INVALID` - Invalid API key
+- `DOMAIN_NOT_ALLOWED` - Origin domain not in allowed list
+- `IP_NOT_ALLOWED` - Client IP not in allowed list
+- `RATE_LIMIT_EXCEEDED` - Too many requests
+- `LOG_TOO_LARGE` - Individual log exceeds size limit
+- `BATCH_TOO_LARGE` - Batch exceeds 1000 logs or 10MB
+- `MESSAGE_EMPTY` - Log message cannot be empty
+- `INVALID_LOG_LEVEL` - Invalid log level specified
+- `FUTURE_TIMESTAMP` - Timestamp cannot be in the future
+
+## Limits
+
+- **Maximum logs per batch:** 1000
+- **Maximum batch size:** 10MB
+- **Maximum log message length:** 10,000 characters
+- **Individual log size:** Configurable per project (default varies)
+- **Rate limiting:** Per project configuration
+
+## Use Cases
+
+- **Testing:** Quickly test log ingestion without installing libraries
+- **Scripting:** Send logs from shell scripts or cron jobs
+- **Custom integrations:** Integrate from languages without native libraries
+- **Legacy systems:** Send logs from systems that only support HTTP
+- **IoT devices:** Lightweight logging for resource-constrained devices
+- **Debugging:** Manual log submission for troubleshooting
+
+## Best Practices
+
+1. **Batch logs when possible** - Send multiple logs in a single request to reduce overhead
+2. **Include structured fields** - Use the `fields` object for searchable metadata
+3. **Use appropriate log levels** - Choose the correct severity level for each log
+4. **Handle errors gracefully** - Check response status and retry on transient failures
+5. **Respect rate limits** - Implement exponential backoff when receiving 429 responses
+6. **Use API keys securely** - Store API keys as environment variables, never hardcode

@@ -39,6 +39,10 @@ https://logbull.com/languages/java/
 For JavaScript and TypeScript integration examples with Winston, Pino, Express.js, and Fastify, visit:
 https://logbull.com/languages/js/
 
+### cURL / HTTP API
+For direct HTTP API examples and cURL usage, visit:
+https://logbull.com/languages/curl/
+
 ### Other Languages
 Log Bull supports any language that can send HTTP requests, including:
 - C#/.NET (Serilog, NLog)
@@ -60,6 +64,7 @@ Log Bull supports any language that can send HTTP requests, including:
 - Go examples: https://logbull.com/languages/go/
 - Java examples: https://logbull.com/languages/java/
 - JavaScript/TypeScript examples: https://logbull.com/languages/js/
+- cURL/HTTP API examples: https://logbull.com/languages/curl/
 
 ## Contributing
 For contribution guidelines, visit:
