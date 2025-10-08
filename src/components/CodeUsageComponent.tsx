@@ -839,7 +839,9 @@ export function CodeUsageComponent({
   const [selectedLanguage, setSelectedLanguage] = useState<Language>('Python');
   const [selectedIntegration, setSelectedIntegration] = useState(0);
   const [selectedInstallMethod, setSelectedInstallMethod] = useState(0);
-  const [copied, setCopied] = useState(false);
+  const [copiedInstallation, setCopiedInstallation] = useState(false);
+  const [copiedConfiguration, setCopiedConfiguration] = useState(false);
+  const [copiedUsage, setCopiedUsage] = useState(false);
 
   const currentConfig = languageConfigs[selectedLanguage];
   const currentIntegration = currentConfig.integrations[selectedIntegration];
@@ -916,24 +918,46 @@ export function CodeUsageComponent({
     setSelectedLanguage(language);
     setSelectedIntegration(0); // Reset to first tab
     setSelectedInstallMethod(0); // Reset to first installation method
-    setCopied(false);
+    setCopiedInstallation(false);
+    setCopiedConfiguration(false);
+    setCopiedUsage(false);
   };
 
   const handleIntegrationChange = (index: number) => {
     setSelectedIntegration(index);
-    setCopied(false);
+    setCopiedInstallation(false);
+    setCopiedConfiguration(false);
+    setCopiedUsage(false);
   };
 
   const handleInstallMethodChange = (index: number) => {
     setSelectedInstallMethod(index);
-    setCopied(false);
+    setCopiedInstallation(false);
+    setCopiedConfiguration(false);
+    setCopiedUsage(false);
   };
 
-  const handleCopy = async () => {
+  const handleCopyInstallation = async () => {
+    const success = await copyToClipboard(getInstallationCommand());
+    if (success) {
+      setCopiedInstallation(true);
+      setTimeout(() => setCopiedInstallation(false), 2000);
+    }
+  };
+
+  const handleCopyConfiguration = async () => {
+    const success = await copyToClipboard(getConfiguration());
+    if (success) {
+      setCopiedConfiguration(true);
+      setTimeout(() => setCopiedConfiguration(false), 2000);
+    }
+  };
+
+  const handleCopyUsage = async () => {
     const success = await copyToClipboard(currentCode);
     if (success) {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopiedUsage(true);
+      setTimeout(() => setCopiedUsage(false), 2000);
     }
   };
 
@@ -996,25 +1020,59 @@ export function CodeUsageComponent({
       {getInstallationCommand() && (
         <div className="mb-4 overflow-hidden rounded-lg bg-gray-50 p-4">
           <div className="mb-2 text-sm font-semibold text-gray-700">Installation</div>
-          <div className="relative overflow-auto rounded-md bg-[#2d2d2d] p-4">
-            <SyntaxHighlighter
-              language={
-                hasMultipleInstallMethods
-                  ? (currentConfig.installation as InstallationMethod[])[selectedInstallMethod]
-                      .language
-                  : currentConfig.installCommand
-              }
-              style={tomorrow}
-              customStyle={{
-                margin: 0,
-                padding: 0,
-                background: 'transparent',
-                fontSize: '0.875rem',
-              }}
-              showLineNumbers={false}
+          <div className="relative overflow-auto rounded-lg bg-[#2d2d2d] shadow-lg">
+            {/* Copy button */}
+            <button
+              onClick={handleCopyInstallation}
+              className="absolute right-4 top-4 z-10 cursor-pointer rounded-md bg-gray-700 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-gray-600"
             >
-              {getInstallationCommand()}
-            </SyntaxHighlighter>
+              {copiedInstallation ? (
+                <span className="flex items-center gap-1">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  Copied!
+                </span>
+              ) : (
+                <span className="flex items-center gap-1">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                  Copy
+                </span>
+              )}
+            </button>
+
+            {/* Syntax highlighted code */}
+            <div className="m-0 rounded-lg p-6 pr-20 text-sm leading-6">
+              <SyntaxHighlighter
+                language={
+                  hasMultipleInstallMethods
+                    ? (currentConfig.installation as InstallationMethod[])[selectedInstallMethod]
+                        .language
+                    : currentConfig.installCommand
+                }
+                style={tomorrow}
+                customStyle={{
+                  margin: 0,
+                  padding: 0,
+                  background: 'transparent',
+                }}
+                showLineNumbers={false}
+              >
+                {getInstallationCommand()}
+              </SyntaxHighlighter>
+            </div>
           </div>
         </div>
       )}
@@ -1023,20 +1081,54 @@ export function CodeUsageComponent({
       {hasConfiguration && (
         <div className="mb-4 overflow-hidden rounded-lg bg-gray-50 p-4">
           <div className="mb-2 text-sm font-semibold text-gray-700">Configuration</div>
-          <div className="relative overflow-auto rounded-md bg-[#2d2d2d] p-4">
-            <SyntaxHighlighter
-              language={currentIntegration.language}
-              style={tomorrow}
-              customStyle={{
-                margin: 0,
-                padding: 0,
-                background: 'transparent',
-                fontSize: '0.875rem',
-              }}
-              showLineNumbers={false}
+          <div className="relative overflow-auto rounded-lg bg-[#2d2d2d] shadow-lg">
+            {/* Copy button */}
+            <button
+              onClick={handleCopyConfiguration}
+              className="absolute right-4 top-4 z-10 cursor-pointer rounded-md bg-gray-700 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-gray-600"
             >
-              {getConfiguration()}
-            </SyntaxHighlighter>
+              {copiedConfiguration ? (
+                <span className="flex items-center gap-1">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  Copied!
+                </span>
+              ) : (
+                <span className="flex items-center gap-1">
+                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
+                  Copy
+                </span>
+              )}
+            </button>
+
+            {/* Syntax highlighted code */}
+            <div className="m-0 rounded-lg p-6 pr-20 text-sm leading-6">
+              <SyntaxHighlighter
+                language={currentIntegration.language}
+                style={tomorrow}
+                customStyle={{
+                  margin: 0,
+                  padding: 0,
+                  background: 'transparent',
+                }}
+                showLineNumbers={false}
+              >
+                {getConfiguration()}
+              </SyntaxHighlighter>
+            </div>
           </div>
         </div>
       )}
@@ -1047,10 +1139,10 @@ export function CodeUsageComponent({
         <div className="relative overflow-auto rounded-lg bg-[#2d2d2d] shadow-lg">
           {/* Copy button */}
           <button
-            onClick={handleCopy}
+            onClick={handleCopyUsage}
             className="absolute right-4 top-4 z-10 cursor-pointer rounded-md bg-gray-700 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-gray-600"
           >
-            {copied ? (
+            {copiedUsage ? (
               <span className="flex items-center gap-1">
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
