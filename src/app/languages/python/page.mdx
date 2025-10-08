@@ -20,6 +20,7 @@ pip install logbull
 The fastest way to start using LogBull - is to use itself as a logger.
 
 ```python
+import time
 from logbull import LogBullLogger
 
 # Initialize logger
@@ -35,6 +36,10 @@ logger.info("User logged in successfully", fields={
     "username": "john_doe",
     "ip": "192.168.1.100"
 })
+
+# Ensure all logs are sent before exiting
+logger.flush()
+time.sleep(5)
 ```
 
 ## Usage Examples
@@ -42,6 +47,7 @@ logger.info("User logged in successfully", fields={
 ### 1. Standalone LogBullLogger
 
 ```python
+import time
 from logbull import LogBullLogger
 
 # Basic configuration (INFO level by default)
@@ -76,6 +82,10 @@ debug_logger.debug("Processing user data", fields={
     "step": "validation",
     "user_id": "12345"
 })
+
+# Ensure all logs are sent before exiting
+logger.flush()
+time.sleep(5)  # Wait for logs to be sent
 ```
 
 #### Context Management
@@ -111,6 +121,10 @@ transaction_logger.info("Transaction completed", fields={
     "currency": "USD"
 })
 # Includes all previous context + new transaction context
+
+# Ensure all logs are sent before exiting
+logger.flush()
+time.sleep(5)  # Wait for logs to be sent
 ```
 
 ### 2. Python Logging Handler

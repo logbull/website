@@ -49,7 +49,8 @@ const languageConfigs: Record<Language, LanguageConfig> = {
       {
         label: 'LogBull',
         language: 'python',
-        code: `from logbull import LogBullLogger
+        code: `import time
+from logbull import LogBullLogger
 
 # Initialize logger
 logger = LogBullLogger(
@@ -73,7 +74,11 @@ session_logger = logger.with_context({
 
 session_logger.info("Processing request", fields={
     "action": "purchase"
-})`,
+})
+
+# Ensure all logs are sent before exiting
+logger.flush()
+time.sleep(5)`,
       },
       {
         label: 'logging',
@@ -204,6 +209,10 @@ func main() {
         "username": "john_doe",
         "ip":       "192.168.1.100",
     })
+
+    // Ensure all logs are sent before exiting
+    logger.Flush()
+    time.Sleep(5 * time.Second)
 }`,
       },
       {
@@ -487,9 +496,9 @@ public class Application {
                 "action", "purchase"
             ));
 
+            // Ensure all logs are sent before exiting
             logger.flush();
-            Thread.sleep(2000);
-
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
@@ -569,7 +578,11 @@ const sessionLogger = logger.withContext({
 
 sessionLogger.info("Processing request", {
   action: "purchase",
-});`,
+});
+
+// Ensure all logs are sent before exiting
+logger.flush();
+await new Promise(resolve => setTimeout(resolve, 5000));`,
       },
       {
         label: 'Winston',
@@ -611,7 +624,11 @@ const requestLogger = logger.child({
 });
 
 requestLogger.info("Request started");
-requestLogger.info("Request completed", { duration_ms: 250 });`,
+requestLogger.info("Request completed", { duration_ms: 250 });
+
+// Ensure all logs are sent before exiting
+logger.flush();
+await new Promise(resolve => setTimeout(resolve, 5000));`,
       },
       {
         label: 'Pino',
@@ -654,7 +671,11 @@ const requestLogger = logger.child({
 });
 
 requestLogger.info("Request started");
-requestLogger.info({ duration_ms: 250 }, "Request completed");`,
+requestLogger.info({ duration_ms: 250 }, "Request completed");
+
+// Ensure all logs are sent before exiting
+logger.flush();
+await new Promise(resolve => setTimeout(resolve, 5000));`,
       },
     ],
   },

@@ -43,6 +43,10 @@ func main() {
         "username": "john_doe",
         "ip":       "192.168.1.100",
     })
+
+    // Ensure all logs are sent before exiting
+    logger.Flush()
+    time.Sleep(5 * time.Second)
 }
 ```
 
@@ -95,7 +99,7 @@ func main() {
     })
 
     logger.Flush()
-    time.Sleep(2 * time.Second) // wait for logs to be sent
+    time.Sleep(5 * time.Second)
 }
 ```
 

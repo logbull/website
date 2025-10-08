@@ -75,6 +75,12 @@ public class Application {
                 "username", "john_doe",
                 "ip", "192.168.1.100"
             ));
+
+            // Ensure all logs are sent before exiting
+            logger.flush();
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         } finally {
             logger.shutdown();
         }
