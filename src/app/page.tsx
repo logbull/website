@@ -299,53 +299,83 @@ export default function HomePage() {
       {/* ======================== MAIN CONTENT ======================== */}
 
       <div className="bg-gradient-to-b from-white to-gray-50 py-12 sm:py-16 md:py-20">
-        <div className="mx-auto max-w-[340px] rounded-lg border border-emerald-600 bg-gradient-to-br p-5 shadow-lg sm:max-w-[600px] md:p-6">
-          <div className="space-y-3 text-sm leading-relaxed md:text-base">
-            <p>
-              I got bored of the complexity of logging systems. So I created the most simple
-              solution from UX side that I could for myself (I use it in production a lot):{' '}
-              <span className="underline decoration-emerald-600 decoration-2">
-                just write a couple of lines of code — and see logs
-              </span>
-              .
-            </p>
+        <div className="mx-auto max-w-[340px] px-4 sm:max-w-[600px] md:max-w-[900px] lg:max-w-[1200px]">
+          <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
+            {/* Quote Section */}
+            <div className="flex-1 rounded-lg border border-emerald-600 bg-gradient-to-br p-5 shadow-lg md:p-6">
+              <div className="space-y-3 text-sm leading-relaxed md:text-base">
+                <p>
+                  I got bored of the complexity of logging systems. So I created the most simple
+                  solution from UX side that I could for myself (I use it in production a lot):{' '}
+                  <span className="underline decoration-emerald-600 decoration-2">
+                    just write a couple of lines of code — and see logs
+                  </span>
+                  .
+                </p>
 
-            <p>
-              <b>Log Bull only collects logs without tons of features.</b> Just the bare essentials
-              to make it work. No huge UI, no dashboards, no metrics, no lists of settings, no hours
-              of installation.
-            </p>
+                <p>
+                  <b>Log Bull only collects logs without tons of features.</b> Just the bare
+                  essentials to make it work. No huge UI, no dashboards, no metrics, no lists of
+                  settings, no hours of installation.
+                </p>
 
-            <p>
-              By the way, the project is based on OpenSearch and written in Go. If you like what
-              I&apos;ve created — please star it on GitHub ⭐. It&apos;s really will help me. Also,
-              you may be interested in my another project for PostgreSQL backups -&nbsp;
-              <a
-                className="underline decoration-emerald-600"
-                href="https://postgresus.com"
-                target="_blank"
-              >
-                Postgresus
-              </a>
-            </p>
+                <p>
+                  By the way, the project is based on OpenSearch and written in Go. If you like what
+                  I&apos;ve created — please star it on GitHub ⭐. It&apos;s really will help me.
+                  Also, you may be interested in my another project for PostgreSQL backups -&nbsp;
+                  <a
+                    className="underline decoration-emerald-600"
+                    href="https://postgresus.com"
+                    target="_blank"
+                  >
+                    Postgresus
+                  </a>
+                </p>
 
-            <div className="mt-4 flex items-center gap-3 border-t border-emerald-200 pt-3">
-              <img
-                src="/rostislav.png"
-                alt="Rostislav Dugin"
-                loading="lazy"
-                className="h-12 w-12 flex-shrink-0 rounded-full object-cover"
-              />
+                <div className="mt-4 flex items-center gap-3 border-t border-emerald-200 pt-3">
+                  <img
+                    src="/rostislav.png"
+                    alt="Rostislav Dugin"
+                    loading="lazy"
+                    className="h-12 w-12 flex-shrink-0 rounded-full object-cover"
+                  />
 
-              <div>
-                <a
-                  href="https://rostislav-dugin.com"
-                  target="_blank"
-                  className="font-semibold text-emerald-600 transition-colors hover:text-emerald-700"
-                >
-                  Rostislav Dugin
-                </a>
-                <p className="text-sm text-gray-600">Developer of Log Bull</p>
+                  <div>
+                    <a
+                      href="https://rostislav-dugin.com"
+                      target="_blank"
+                      className="font-semibold text-emerald-600 transition-colors hover:text-emerald-700"
+                    >
+                      Rostislav Dugin
+                    </a>
+                    <p className="text-sm text-gray-600">Developer of Log Bull</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Video Section */}
+            <div className="flex-1">
+              <div className="">
+                <div className="relative aspect-video w-full overflow-hidden rounded-lg shadow">
+                  <iframe
+                    src="https://www.youtube.com/embed/8H8jF8nVzJE?si=nc9Swx9oinXOzujF"
+                    title="How to use Log Bull (overview)?"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 h-full w-full"
+                  />
+                </div>
+
+                <h3 className="mb-1 mt-5 text-xl font-semibold md:text-xl">
+                  How to use Log Bull (overview)?
+                </h3>
+
+                <p>
+                  Watch in this short 3 minutes video how to use Log Bull: how to create a project,
+                  how to send logs from Python, how to query for logs, how to add team members and
+                  what is users&apos; audit logs
+                </p>
               </div>
             </div>
           </div>
@@ -676,6 +706,23 @@ export default function HomePage() {
           </div>
 
           <InstallationComponent />
+
+          <div className="mt-12">
+            <p className="mb-6 text-center text-base sm:text-lg md:text-xl">
+              Also you can watch the video with guide how to install Log Bull on VPS (both 3 ways)
+            </p>
+            <div className="mx-auto max-w-[800px]">
+              <div className="relative aspect-video w-full overflow-hidden rounded-lg shadow-lg">
+                <iframe
+                  src="https://www.youtube.com/embed/39hPU2X3deU?si=-OveQojkOTNblOkd"
+                  title="How to install Log Bull on VPS"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute inset-0 h-full w-full"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       {/* ======================== INSTALLATION ======================== */}
