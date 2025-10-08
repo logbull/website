@@ -318,7 +318,15 @@ export default function HomePage() {
 
             <p>
               By the way, the project is based on OpenSearch and written in Go. If you like what
-              I&apos;ve created — please star it on GitHub ⭐. It&apos;s really will help me.
+              I&apos;ve created — please star it on GitHub ⭐. It&apos;s really will help me. Also,
+              you may be interested in my another project for PostgreSQL backups -&nbsp;
+              <a
+                className="underline decoration-emerald-600"
+                href="https://postgresus.com"
+                target="_blank"
+              >
+                Postgresus
+              </a>
             </p>
 
             <div className="mt-4 flex items-center gap-3 border-t border-emerald-200 pt-3">
@@ -839,12 +847,12 @@ export default function HomePage() {
               </a>
 
               <a
-                href="https://postgresus.com"
+                href="https://rostislav-dugin.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-colors hover:text-emerald-200"
               >
-                Postgresus
+                Contact developer
               </a>
             </div>
             <p className="text-center text-sm text-white">
