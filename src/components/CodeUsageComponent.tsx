@@ -787,6 +787,42 @@ const languages: Language[] = [
   'Rust',
 ];
 
+const copyToClipboard = async (text: string): Promise<boolean> => {
+  // Try modern clipboard API first
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    try {
+      await navigator.clipboard?.writeText(text);
+      return true;
+    } catch (error) {
+      console.warn('Modern clipboard API failed, trying fallback:', error);
+    }
+  }
+
+  // Fallback to legacy method
+  try {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.left = '-999999px';
+    textarea.style.top = '-999999px';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    const successful = document.execCommand('copy');
+    document.body.removeChild(textarea);
+
+    if (successful) {
+      return true;
+    } else {
+      throw new Error('execCommand failed');
+    }
+  } catch (error) {
+    console.error('Failed to copy to clipboard:', error);
+    return false;
+  }
+};
+
 interface Props {
   logbullHost?: string;
   logbullProjectId?: string;
@@ -894,12 +930,10 @@ export function CodeUsageComponent({
   };
 
   const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(currentCode);
+    const success = await copyToClipboard(currentCode);
+    if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
     }
   };
 
