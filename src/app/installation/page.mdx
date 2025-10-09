@@ -64,8 +64,6 @@ This single command will:
 Create a `docker-compose.yml` file with the following configuration:
 
 ```yaml
-version: '3'
-
 services:
   logbull:
     container_name: logbull
@@ -108,9 +106,9 @@ After installation:
 
 To update Log Bull, you need to stop it, clean up Docker cache and restart the container.
 
-1) Go to the directory where Log Bull is installed (usually `/opt/logbull`)
-2) Stop the container: `docker compose stop`
-3) Clean up Docker cache: `docker system prune -a`
-4) Restart the container: `docker compose up -d`
+1. Go to the directory where Log Bull is installed (usually `/opt/logbull`)
+2. Stop the container: `docker compose stop`
+3. Clean up Docker cache: `docker system prune -a`
+4. Restart the container: `docker compose up -d`
 
 It will get the latest version of Log Bull from the Docker Hub (if you have not fixed the version in the `docker-compose.yml` file).

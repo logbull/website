@@ -6,9 +6,14 @@ import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 type InstallMethod = 'Automated Script' | 'Docker Run' | 'Docker Compose';
 
-type Installation = {
+type ScriptVariant = {
   label: string;
   code: string;
+};
+
+type Installation = {
+  label: string;
+  code: string | ScriptVariant[];
   language: string;
   description?: string;
 };
@@ -19,9 +24,20 @@ const installationMethods: Record<InstallMethod, Installation> = {
     language: 'bash',
     description:
       'The installation script will install Docker with Docker Compose (if not already installed), set up LogBull, and configure automatic startup on system reboot. Linux only.',
-    code: `sudo apt-get install -y curl && \\
+    code: [
+      {
+        label: 'with sudo',
+        code: `sudo apt-get install -y curl && \\
 sudo curl -sSL https://raw.githubusercontent.com/logbull/logbull/main/install-logbull.sh \\
 | sudo bash`,
+      },
+      {
+        label: 'without sudo',
+        code: `apt-get install -y curl && \\
+curl -sSL https://raw.githubusercontent.com/logbull/logbull/main/install-logbull.sh \\
+| bash`,
+      },
+    ],
   },
   'Docker Run': {
     label: 'Docker',
@@ -43,9 +59,7 @@ sudo curl -sSL https://raw.githubusercontent.com/logbull/logbull/main/install-lo
     language: 'yaml',
     description:
       'Create a docker-compose.yml file with the following configuration, then run: docker compose up -d',
-    code: `version: "3"
-
-services:
+    code: `services:
   logbull:
     container_name: logbull
     image: logbull/logbull:latest
@@ -66,18 +80,33 @@ const methods: InstallMethod[] = ['Automated Script', 'Docker Run', 'Docker Comp
 
 export function InstallationComponent() {
   const [selectedMethod, setSelectedMethod] = useState<InstallMethod>('Automated Script');
+  const [selectedVariant, setSelectedVariant] = useState(0);
   const [copied, setCopied] = useState(false);
 
   const currentInstallation = installationMethods[selectedMethod];
+  const hasVariants = Array.isArray(currentInstallation.code);
 
   const handleMethodChange = (method: InstallMethod) => {
     setSelectedMethod(method);
+    setSelectedVariant(0);
     setCopied(false);
+  };
+
+  const handleVariantChange = (index: number) => {
+    setSelectedVariant(index);
+    setCopied(false);
+  };
+
+  const getCurrentCode = () => {
+    if (hasVariants) {
+      return (currentInstallation.code as ScriptVariant[])[selectedVariant].code;
+    }
+    return currentInstallation.code as string;
   };
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(currentInstallation.code);
+      await navigator.clipboard.writeText(getCurrentCode());
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -103,6 +132,25 @@ export function InstallationComponent() {
           </button>
         ))}
       </div>
+
+      {/* Script variants tabs (only for Automated Script) */}
+      {hasVariants && (
+        <div className="mb-4 flex flex-wrap gap-2">
+          {(currentInstallation.code as ScriptVariant[]).map((variant, index) => (
+            <button
+              key={index}
+              onClick={() => handleVariantChange(index)}
+              className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                selectedVariant === index
+                  ? 'bg-blue-100 text-blue-700 ring-2 ring-blue-600'
+                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              {variant.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Description */}
       {currentInstallation.description && (
@@ -155,7 +203,7 @@ export function InstallationComponent() {
             }}
             showLineNumbers={false}
           >
-            {currentInstallation.code}
+            {getCurrentCode()}
           </SyntaxHighlighter>
         </div>
       </div>
