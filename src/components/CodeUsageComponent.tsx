@@ -510,13 +510,120 @@ public class Application {
     ],
   },
   PHP: {
-    installation: 'Coming soon',
-    installCommand: 'text',
+    installation: 'composer require logbull/logbull',
+    installCommand: 'bash',
     integrations: [
       {
-        label: 'Coming Soon',
-        language: 'text',
-        code: 'PHP integration is coming soon!\n\nStay tuned for updates.',
+        label: 'LogBull',
+        language: 'php',
+        code: `<?php
+
+use LogBull\\Core\\LogBullLogger;
+
+$logger = new LogBullLogger(
+    projectId: 'LOGBULL_PROJECT_ID_PLACEHOLDER',
+    host: 'http://LOGBULL_HOST_PLACEHOLDER',
+    apiKey: 'LOGBULL_API_KEY_PLACEHOLDER' // optional
+);
+
+$logger->info('User logged in successfully', [
+    'user_id' => '12345',
+    'username' => 'john_doe',
+    'ip' => '192.168.1.100'
+]);
+
+// Ensure all logs are sent before exiting
+$logger->flush();
+sleep(2);`,
+      },
+      {
+        label: 'Monolog',
+        language: 'php',
+        code: `<?php
+
+use Monolog\\Logger;
+use Monolog\\Level;
+use LogBull\\Handlers\\MonologHandler;
+
+$handler = new MonologHandler(
+    projectId: 'LOGBULL_PROJECT_ID_PLACEHOLDER',
+    host: 'http://LOGBULL_HOST_PLACEHOLDER',
+    apiKey: 'LOGBULL_API_KEY_PLACEHOLDER', // optional
+    level: Level::Info
+);
+
+$logger = new Logger('app');
+$logger->pushHandler($handler);
+
+$logger->info('User action', [
+    'user_id' => '12345',
+    'action' => 'login',
+    'ip' => '192.168.1.100'
+]);
+
+// Ensure all logs are sent before exiting
+$handler->flush();
+sleep(2);`,
+      },
+      {
+        label: 'PSR-3',
+        language: 'php',
+        code: `<?php
+
+use LogBull\\Handlers\\PSR3Logger;
+use LogBull\\Core\\Types;
+
+$logger = new PSR3Logger(
+    projectId: 'LOGBULL_PROJECT_ID_PLACEHOLDER',
+    host: 'http://LOGBULL_HOST_PLACEHOLDER',
+    apiKey: 'LOGBULL_API_KEY_PLACEHOLDER', // optional
+    logLevel: Types::INFO
+);
+
+$logger->info('API request', [
+    'method' => 'POST',
+    'path' => '/api/users',
+    'status_code' => 201
+]);
+
+// Ensure all logs are sent before exiting
+$logger->flush();
+sleep(2);`,
+      },
+      {
+        label: 'Laravel',
+        language: 'php',
+        configuration: `// config/logging.php
+'channels' => [
+    'logbull' => [
+        'driver' => 'custom',
+        'via' => \\LogBull\\Handlers\\LaravelHandler::class,
+        'project_id' => env('LOGBULL_PROJECT_ID_PLACEHOLDER'),
+        'host' => env('LOGBULL_HOST_PLACEHOLDER'),
+        'api_key' => env('LOGBULL_API_KEY_PLACEHOLDER'), // optional
+        'level' => env('LOG_LEVEL', 'info'),
+    ],
+],
+
+// .env
+LOGBULL_PROJECT_ID=LOGBULL_PROJECT_ID_PLACEHOLDER
+LOGBULL_HOST=http://LOGBULL_HOST_PLACEHOLDER
+LOGBULL_API_KEY=LOGBULL_API_KEY_PLACEHOLDER`,
+        code: `<?php
+
+use Illuminate\\Support\\Facades\\Log;
+
+// Use the logbull channel
+Log::channel('logbull')->info('User logged in', [
+    'user_id' => auth()->id(),
+    'ip' => request()->ip()
+]);
+
+// Or set as default channel in .env: LOG_CHANNEL=logbull
+Log::info('Order created', [
+    'order_id' => $order->id,
+    'total' => $order->total
+]);`,
       },
     ],
   },

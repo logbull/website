@@ -1,0 +1,357 @@
+---
+title: PHP Integration - Log Bull Documentation
+description: Learn how to integrate Log Bull with PHP applications. Multiple integration options including standalone logger, Monolog, PSR-3, and Laravel.
+---
+
+# PHP
+
+LogBull PHP library provides multiple integration options for sending logs to your LogBull server.
+
+**GitHub Repository:** [logbull-php](https://github.com/logbull/logbull-php)
+
+## Installation
+
+```bash
+composer require logbull/logbull
+```
+
+## Quick Start
+
+The fastest way to start using LogBull is with the standalone logger:
+
+```php
+<?php
+
+use LogBull\Core\LogBullLogger;
+
+$logger = new LogBullLogger(
+    projectId: 'LOGBULL_PROJECT_ID',
+    host: 'http://LOGBULL_HOST',
+    apiKey: 'YOUR_API_KEY' // optional
+);
+
+$logger->info('User logged in successfully', [
+    'user_id' => '12345',
+    'username' => 'john_doe',
+    'ip' => '192.168.1.100'
+]);
+
+// Ensure all logs are sent before exiting
+$logger->flush();
+sleep(2);
+```
+
+## Usage Examples
+
+### 1. Standalone LogBullLogger
+
+```php
+<?php
+
+use LogBull\Core\LogBullLogger;
+use LogBull\Core\Types;
+
+// Initialize logger
+$logger = new LogBullLogger(
+    projectId: 'LOGBULL_PROJECT_ID',
+    host: 'http://LOGBULL_HOST',
+    apiKey: 'YOUR_API_KEY', // optional
+    logLevel: Types::INFO
+);
+
+// Basic logging
+$logger->info('Application started');
+
+$logger->info('User logged in successfully', [
+    'user_id' => '12345',
+    'username' => 'john_doe',
+    'ip' => '192.168.1.100'
+]);
+
+$logger->error('Database connection failed', [
+    'database' => 'users_db',
+    'error_code' => 500
+]);
+
+// Context management
+$sessionLogger = $logger->withContext([
+    'session_id' => 'sess_abc123',
+    'user_id' => 'user_456'
+]);
+
+$sessionLogger->info('Processing user request', [
+    'action' => 'purchase',
+    'amount' => 99.99
+]);
+
+// Ensure all logs are sent before exiting
+$logger->flush();
+sleep(2);
+```
+
+#### Context Management
+
+```php
+<?php
+
+// Attach persistent context to all subsequent logs
+$sessionLogger = $logger->withContext([
+    'session_id' => 'sess_abc123',
+    'user_id' => 'user_456',
+    'request_id' => 'req_789'
+]);
+
+// All logs from sessionLogger include the context automatically
+$sessionLogger->info('User started checkout process', [
+    'cart_items' => 3,
+    'total_amount' => 149.99
+]);
+// Output includes: session_id, user_id, request_id + cart_items, total_amount
+
+$sessionLogger->error('Payment processing failed', [
+    'payment_method' => 'credit_card',
+    'error_code' => 'DECLINED'
+]);
+
+// Context can be chained
+$transactionLogger = $sessionLogger->withContext([
+    'transaction_id' => 'txn_xyz789',
+    'merchant_id' => 'merchant_123'
+]);
+
+$transactionLogger->info('Transaction completed', [
+    'amount' => 149.99,
+    'currency' => 'USD'
+]);
+// Includes all previous context + new transaction context
+```
+
+### 2. Monolog Integration
+
+```php
+<?php
+
+use Monolog\Logger;
+use Monolog\Level;
+use LogBull\Handlers\MonologHandler;
+
+// Create Monolog logger with LogBull handler
+$handler = new MonologHandler(
+    projectId: 'LOGBULL_PROJECT_ID',
+    host: 'http://LOGBULL_HOST',
+    apiKey: 'YOUR_API_KEY', // optional
+    level: Level::Info
+);
+
+$logger = new Logger('app');
+$logger->pushHandler($handler);
+
+// Use standard Monolog logging
+$logger->info('User action', [
+    'user_id' => '12345',
+    'action' => 'login',
+    'ip' => '192.168.1.100'
+]);
+
+$logger->error('Payment failed', [
+    'order_id' => 'ord_123',
+    'amount' => 99.99,
+    'currency' => 'USD'
+]);
+
+// Ensure all logs are sent before exiting
+$handler->flush();
+sleep(2);
+```
+
+### 3. PSR-3 Logger
+
+```php
+<?php
+
+use LogBull\Handlers\PSR3Logger;
+use LogBull\Core\Types;
+
+// Create PSR-3 compatible logger
+$logger = new PSR3Logger(
+    projectId: 'LOGBULL_PROJECT_ID',
+    host: 'http://LOGBULL_HOST',
+    apiKey: 'YOUR_API_KEY', // optional
+    logLevel: Types::INFO
+);
+
+// Use standard PSR-3 methods
+$logger->info('API request', [
+    'method' => 'POST',
+    'path' => '/api/users',
+    'status_code' => 201,
+    'response_time_ms' => 45
+]);
+
+$logger->error('Database error', [
+    'query' => 'SELECT * FROM users',
+    'error' => 'Connection timeout'
+]);
+
+// Ensure all logs are sent before exiting
+$logger->flush();
+sleep(2);
+```
+
+### 4. Laravel Integration
+
+LogBull integrates seamlessly with Laravel's logging system through a custom log channel.
+
+#### Configuration
+
+Add LogBull as a custom channel in `config/logging.php`:
+
+```php
+'channels' => [
+    'logbull' => [
+        'driver' => 'custom',
+        'via' => \LogBull\Handlers\LaravelHandler::class,
+        'project_id' => env('LOGBULL_PROJECT_ID'),
+        'host' => env('LOGBULL_HOST'),
+        'api_key' => env('LOGBULL_API_KEY'), // optional
+        'level' => env('LOG_LEVEL', 'info'),
+    ],
+],
+```
+
+Add to your `.env`:
+
+```
+LOGBULL_PROJECT_ID=your-project-id-here
+LOGBULL_HOST=http://localhost:4005
+LOGBULL_API_KEY=your-api-key-here
+```
+
+#### Usage
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Log;
+
+// Use the logbull channel directly
+Log::channel('logbull')->info('User logged in', [
+    'user_id' => auth()->id(),
+    'ip' => request()->ip()
+]);
+
+// Set as default channel in .env
+LOG_CHANNEL=logbull
+
+// Then use standard Log facade
+Log::info('Order created', [
+    'order_id' => $order->id,
+    'total' => $order->total
+]);
+```
+
+#### Using Stack Driver
+
+You can combine LogBull with other log channels using Laravel's stack driver:
+
+```php
+'channels' => [
+    'stack' => [
+        'driver' => 'stack',
+        'channels' => ['single', 'logbull'],
+        'ignore_exceptions' => false,
+    ],
+],
+```
+
+This allows you to simultaneously log to your local files and send logs to LogBull.
+
+#### In Controllers
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Support\Facades\Log;
+
+class OrderController extends Controller
+{
+    public function store(Request $request)
+    {
+        Log::channel('logbull')->info('Order processing started', [
+            'user_id' => $request->user()->id,
+            'cart_total' => $request->input('total')
+        ]);
+
+        // Process order...
+
+        Log::channel('logbull')->info('Order completed', [
+            'order_id' => $order->id,
+            'amount' => $order->total
+        ]);
+
+        return response()->json(['order' => $order]);
+    }
+}
+```
+
+## Configuration Options
+
+### LogBullLogger Parameters
+
+- `projectId` (required): Your LogBull project ID (UUID format)
+- `host` (required): LogBull server URL (e.g., `http://localhost:4005`)
+- `apiKey` (optional): API key for authentication
+- `logLevel` (optional): Minimum log level to process (default: `INFO`)
+- `context` (optional): Default context to attach to all logs
+
+### Available Log Levels
+
+- `DEBUG`: Detailed information for debugging
+- `INFO`: General informational messages
+- `WARNING`: Warning messages
+- `ERROR`: Error messages
+- `CRITICAL`: Critical error messages
+
+## API Reference
+
+### LogBullLogger Methods
+
+- `debug(string $message, ?array $fields = null): void` - Log debug message
+- `info(string $message, ?array $fields = null): void` - Log info message
+- `warning(string $message, ?array $fields = null): void` - Log warning message
+- `error(string $message, ?array $fields = null): void` - Log error message
+- `critical(string $message, ?array $fields = null): void` - Log critical message
+- `withContext(array $context): LogBullLogger` - Create new logger with additional context
+- `flush(): void` - Immediately send all queued logs
+- `shutdown(): void` - Stop background processing and send remaining logs
+
+### MonologHandler Methods
+
+- `flush(): void` - Immediately send all queued logs
+- `close(): void` - Close the handler and send remaining logs
+
+### PSR3Logger Methods
+
+- All standard PSR-3 methods: `emergency()`, `alert()`, `critical()`, `error()`, `warning()`, `notice()`, `info()`, `debug()`, `log()`
+- `flush(): void` - Immediately send all queued logs
+- `shutdown(): void` - Stop and send remaining logs
+
+## Features
+
+- **Multiple integration options**: Standalone logger, Monolog handler, PSR-3 wrapper, and Laravel channel
+- **Context support**: Attach persistent context to logs (session_id, user_id, etc.)
+- **Asynchronous sending**: Non-blocking HTTP requests using curl_multi
+- **Zero dependencies**: No production dependencies required
+
+## Requirements
+
+- PHP 8.0 or higher
+- ext-curl (for HTTP requests)
+- ext-json (for JSON encoding)
+
+### Optional Dependencies
+
+- `monolog/monolog` ^3.0 (for Monolog integration)
+- `psr/log` ^3.0 (for PSR-3 integration)

@@ -3,6 +3,7 @@
   "go": "Go",
   "java": "Java",
   "js": "JavaScript/TypeScript",
+  "php": "PHP",
   "curl": "cURL / HTTP",
   "*": {
     "theme": {

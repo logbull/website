@@ -43,6 +43,10 @@ https://logbull.com/languages/java/
 For JavaScript and TypeScript integration examples with Winston, Pino, Express.js, and Fastify, visit:
 https://logbull.com/languages/js/
 
+### PHP
+For PHP integration examples with Monolog, PSR-3, and Laravel, visit:
+https://logbull.com/languages/php/
+
 ### cURL / HTTP API
 For direct HTTP API examples and cURL usage, visit:
 https://logbull.com/languages/curl/
@@ -50,7 +54,6 @@ https://logbull.com/languages/curl/
 ### Other Languages
 Log Bull supports any language that can send HTTP requests, including:
 - C#/.NET (Serilog, NLog)
-- PHP (Monolog)
 - Ruby
 
 ## Use Cases
@@ -69,6 +72,7 @@ Log Bull supports any language that can send HTTP requests, including:
 - Go examples: https://logbull.com/languages/go/
 - Java examples: https://logbull.com/languages/java/
 - JavaScript/TypeScript examples: https://logbull.com/languages/js/
+- PHP examples: https://logbull.com/languages/php/
 - cURL/HTTP API examples: https://logbull.com/languages/curl/
 
 ## Contributing
