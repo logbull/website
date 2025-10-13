@@ -675,6 +675,15 @@ export default function HomePage() {
               <li className="flex items-center">
                 <span className="mr-3 text-emerald-600">•</span>
                 <a
+                  href="/languages/php/"
+                  className="text-emerald-600 underline decoration-emerald-600 underline-offset-2 transition-colors hover:text-emerald-700"
+                >
+                  PHP
+                </a>
+              </li>
+              <li className="flex items-center">
+                <span className="mr-3 text-emerald-600">•</span>
+                <a
                   href="/languages/curl/"
                   className="text-emerald-600 underline decoration-emerald-600 underline-offset-2 transition-colors hover:text-emerald-700"
                 >
