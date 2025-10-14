@@ -191,6 +191,61 @@ export default function HomePage() {
           }),
         }}
       />
+
+      {/* Structured Data - Video 1: Overview */}
+      <Script
+        id="structured-data-video-overview"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'VideoObject',
+            name: 'How to use Log Bull (overview)?',
+            description:
+              "Watch in this short 3 minutes video how to use Log Bull: how to create a project, how to send logs from Python, how to query for logs, how to add team members and what is users' audit logs.",
+            thumbnailUrl: 'https://img.youtube.com/vi/8H8jF8nVzJE/maxresdefault.jpg',
+            uploadDate: '2025-10-10',
+            duration: 'PT3M',
+            contentUrl: 'https://www.youtube.com/watch?v=8H8jF8nVzJE',
+            embedUrl: 'https://www.youtube.com/embed/8H8jF8nVzJE',
+            publisher: {
+              '@type': 'Organization',
+              name: 'Log Bull',
+              logo: {
+                '@type': 'ImageObject',
+                url: 'https://logbull.com/logo.svg',
+              },
+            },
+          }),
+        }}
+      />
+
+      {/* Structured Data - Video 2: Installation */}
+      <Script
+        id="structured-data-video-installation"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'VideoObject',
+            name: 'How to install Log Bull',
+            description:
+              'Complete guide showing how to install Log Bull. Learn about all three installation methods: automated script, Docker run command, and Docker Compose setup.',
+            thumbnailUrl: 'https://img.youtube.com/vi/39hPU2X3deU/maxresdefault.jpg',
+            uploadDate: '2025-10-10',
+            contentUrl: 'https://www.youtube.com/watch?v=39hPU2X3deU',
+            embedUrl: 'https://www.youtube.com/embed/39hPU2X3deU',
+            publisher: {
+              '@type': 'Organization',
+              name: 'Log Bull',
+              logo: {
+                '@type': 'ImageObject',
+                url: 'https://logbull.com/logo.svg',
+              },
+            },
+          }),
+        }}
+      />
       {/* ======================== NAVBAR ======================== */}
       <nav className="fixed top-0 z-50 flex h-[60px] w-full justify-center bg-white sm:h-[70px] md:h-[80px]">
         <div className="flex min-w-0 grow items-center border-b border-gray-200 px-10">
