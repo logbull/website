@@ -51,9 +51,12 @@ https://logbull.com/languages/php/
 For direct HTTP API examples and cURL usage, visit:
 https://logbull.com/languages/curl/
 
+### .NET / C#
+For .NET integration examples with Serilog, NLog, and Microsoft.Extensions.Logging, visit:
+https://logbull.com/languages/net/
+
 ### Other Languages
 Log Bull supports any language that can send HTTP requests, including:
-- C#/.NET (Serilog, NLog)
 - Ruby
 
 ## Use Cases

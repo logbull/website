@@ -1,0 +1,299 @@
+---
+title: .NET / C# Integration - Log Bull Documentation
+description: Learn how to integrate Log Bull with .NET applications. Multiple integration options including standalone logger, Microsoft.Extensions.Logging, and Serilog.
+---
+
+# .NET / C#
+
+LogBull .NET library provides multiple integration options for sending logs to your LogBull server.
+
+**GitHub Repository:** [logbull-net](https://github.com/logbull/logbull-net)
+
+## Installation
+
+Install via NuGet Package Manager:
+
+```bash
+dotnet add package LogBull
+```
+
+Or via Package Manager Console:
+
+```powershell
+Install-Package LogBull
+```
+
+## Quick Start
+
+The fastest way to start using LogBull is with the standalone logger:
+
+```csharp
+using LogBull;
+using LogBull.Core;
+
+var logger = LogBullLogger.CreateBuilder()
+    .WithProjectId("LOGBULL_PROJECT_ID")
+    .WithHost("http://LOGBULL_HOST")
+    .WithApiKey("YOUR_API_KEY") // optional
+    .WithLogLevel(LogLevel.INFO)
+    .Build();
+
+logger.Info("User logged in successfully", new Dictionary<string, object>
+{
+    { "user_id", "12345" },
+    { "username", "john_doe" },
+    { "ip", "192.168.1.100" }
+});
+
+// Ensure all logs are sent before exiting
+logger.Flush();
+await Task.Delay(2000);
+logger.Dispose();
+```
+
+## Usage Examples
+
+### 1. Standalone Logger
+
+#### Basic Usage
+
+```csharp
+using LogBull;
+using LogBull.Core;
+
+// Initialize logger
+var logger = LogBullLogger.CreateBuilder()
+    .WithProjectId("LOGBULL_PROJECT_ID")
+    .WithHost("http://LOGBULL_HOST")
+    .WithApiKey("YOUR_API_KEY") // optional
+    .WithLogLevel(LogLevel.INFO)
+    .Build();
+
+// Basic logging
+logger.Info("User logged in successfully", new Dictionary<string, object>
+{
+    { "user_id", "12345" },
+    { "username", "john_doe" },
+    { "ip", "192.168.1.100" }
+});
+
+logger.Error("Database connection failed", new Dictionary<string, object>
+{
+    { "database", "users_db" },
+    { "error_code", 500 }
+});
+
+// Ensure all logs are sent before exiting
+logger.Flush();
+await Task.Delay(2000);
+logger.Dispose();
+```
+
+#### Context Management
+
+```csharp
+// Attach persistent context to all subsequent logs
+var sessionLogger = logger.WithContext(new Dictionary<string, object>
+{
+    { "session_id", "sess_abc123" },
+    { "user_id", "user_456" },
+    { "request_id", "req_789" }
+});
+
+// All logs from sessionLogger include the context automatically
+sessionLogger.Info("User started checkout process", new Dictionary<string, object>
+{
+    { "cart_items", 3 },
+    { "total_amount", 149.99 }
+});
+// Output includes: session_id, user_id, request_id + cart_items, total_amount
+
+sessionLogger.Error("Payment processing failed", new Dictionary<string, object>
+{
+    { "payment_method", "credit_card" },
+    { "error_code", "DECLINED" }
+});
+
+// Context can be chained
+var transactionLogger = sessionLogger.WithContext(new Dictionary<string, object>
+{
+    { "transaction_id", "txn_xyz789" },
+    { "merchant_id", "merchant_123" }
+});
+
+transactionLogger.Info("Transaction completed", new Dictionary<string, object>
+{
+    { "amount", 149.99 },
+    { "currency", "USD" }
+});
+// Includes all previous context + new transaction context
+```
+
+### 2. Microsoft.Extensions.Logging Integration
+
+```csharp
+using Microsoft.Extensions.Logging;
+using LogBull.Core;
+using LogBull.Extensions;
+
+// Configure logging in your application
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddLogBull(configBuilder =>
+    {
+        configBuilder
+            .WithProjectId("LOGBULL_PROJECT_ID")
+            .WithHost("http://LOGBULL_HOST")
+            .WithApiKey("YOUR_API_KEY")
+            .WithLogLevel(LogLevel.INFO);
+    });
+});
+
+var logger = loggerFactory.CreateLogger<MyClass>();
+
+// Use standard Microsoft.Extensions.Logging
+logger.LogInformation("User action: {UserId} performed {Action}", "12345", "login");
+
+logger.LogError("Payment failed: Order {OrderId}, Amount {Amount}", "ord_123", 99.99);
+
+// Structured logging with multiple properties
+logger.LogInformation("Request processed: {Method} {Path} {StatusCode} {Duration}ms",
+    "POST", "/api/users", 201, 45);
+```
+
+#### ASP.NET Core Integration
+
+In your `Program.cs` or `Startup.cs`:
+
+```csharp
+using LogBull.Core;
+using LogBull.Extensions;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add LogBull to the logging pipeline
+builder.Logging.AddLogBull(configBuilder =>
+{
+    configBuilder
+        .WithProjectId(builder.Configuration["LogBull:ProjectId"])
+        .WithHost(builder.Configuration["LogBull:Host"])
+        .WithApiKey(builder.Configuration["LogBull:ApiKey"])
+        .WithLogLevel(LogLevel.INFO);
+});
+
+var app = builder.Build();
+
+// In your controllers
+public class OrderController : ControllerBase
+{
+    private readonly ILogger<OrderController> _logger;
+
+    public OrderController(ILogger<OrderController> logger)
+    {
+        _logger = logger;
+    }
+
+    [HttpPost]
+    public IActionResult CreateOrder([FromBody] Order order)
+    {
+        _logger.LogInformation("Order created: {OrderId}, Total: {Total}", order.Id, order.Total);
+        return Ok(order);
+    }
+}
+```
+
+### 3. Serilog Integration
+
+```csharp
+using Serilog;
+using LogBull.Core;
+using LogBull.Serilog;
+
+// Create Serilog logger with LogBull sink
+var config = Config.CreateBuilder()
+    .WithProjectId("LOGBULL_PROJECT_ID")
+    .WithHost("http://LOGBULL_HOST")
+    .WithApiKey("YOUR_API_KEY")
+    .WithLogLevel(LogLevel.INFO)
+    .Build();
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Sink(new LogBullSink(config))
+    .CreateLogger();
+
+// Use standard Serilog logging
+Log.Information("User {UserId} performed action {Action}", "12345", "login");
+
+Log.Error("Payment failed for order {OrderId} with amount {Amount} {Currency}",
+    "ord_123", 99.99, "USD");
+
+// Structured logging with properties
+Log.Information("Request processed {@Request}",
+    new { Method = "POST", Path = "/api/users", StatusCode = 201 });
+
+// Don't forget to flush on application shutdown
+Log.CloseAndFlush();
+```
+
+## Configuration Options
+
+### Config Parameters
+
+- `ProjectId` (required): Your LogBull project ID (UUID format)
+- `Host` (required): LogBull server URL (e.g., `http://localhost:4005`)
+- `ApiKey` (optional): API key for authentication
+- `LogLevel` (optional): Minimum log level to process (default: `INFO`)
+
+### Available Log Levels
+
+- `DEBUG`: Detailed information for debugging (priority: 10)
+- `INFO`: General information messages (priority: 20)
+- `WARNING`: Warning messages (priority: 30)
+- `ERROR`: Error messages (priority: 40)
+- `CRITICAL`: Critical error messages (priority: 50)
+
+## API Reference
+
+### LogBullLogger
+
+#### Methods
+
+- `Debug(string message, Dictionary<string, object>? fields = null)`: Log debug message
+- `Info(string message, Dictionary<string, object>? fields = null)`: Log info message
+- `Warning(string message, Dictionary<string, object>? fields = null)`: Log warning message
+- `Error(string message, Dictionary<string, object>? fields = null)`: Log error message
+- `Critical(string message, Dictionary<string, object>? fields = null)`: Log critical message
+- `WithContext(Dictionary<string, object> context)`: Create new logger with additional context
+- `Flush()`: Immediately send all queued logs
+- `Shutdown()`: Stop background processing and send remaining logs
+- `Dispose()`: Dispose the logger and release resources
+
+### LogBullLoggerProvider (MEL)
+
+#### Methods
+
+- `CreateLogger(string categoryName)`: Create a logger for the given category
+- `Dispose()`: Dispose the provider and release resources
+
+### LogBullSink (Serilog)
+
+#### Methods
+
+- `Emit(LogEvent logEvent)`: Emit a log event (called automatically by Serilog)
+- `Flush()`: Immediately send all queued logs
+- `Dispose()`: Dispose the sink and release resources
+
+## Features
+
+- **Multiple integration options**: Standalone logger, Microsoft.Extensions.Logging provider, and Serilog sink
+- **Context support**: Attach persistent context to logs (session_id, user_id, etc.)
+- **Thread-safe**: All operations are safe for concurrent use
+- **Asynchronous**: Non-blocking log sending with automatic batching
+
+## Requirements
+
+- **.NET**: 6.0 or higher
+- **Dependencies**:
+  - `System.Text.Json` (6.0.\*)
+  - `Microsoft.Extensions.Logging.Abstractions` (6.0.\*) - for MEL integration
+  - `Serilog` (2.12.\*) - for Serilog integration

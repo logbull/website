@@ -3,6 +3,7 @@
   "go": "Go",
   "java": "Java",
   "js": "JavaScript/TypeScript",
+  "net": ".NET / C#",
   "php": "PHP",
   "curl": "cURL / HTTP",
   "*": {

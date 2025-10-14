@@ -639,6 +639,15 @@ export default function HomePage() {
               <li className="flex items-center">
                 <span className="mr-3 text-emerald-600">•</span>
                 <a
+                  href="/languages/curl/"
+                  className="text-emerald-600 underline decoration-emerald-600 underline-offset-2 transition-colors hover:text-emerald-700"
+                >
+                  cURL
+                </a>
+              </li>
+              <li className="flex items-center">
+                <span className="mr-3 text-emerald-600">•</span>
+                <a
                   href="/languages/python/"
                   className="text-emerald-600 underline decoration-emerald-600 underline-offset-2 transition-colors hover:text-emerald-700"
                 >
@@ -684,10 +693,10 @@ export default function HomePage() {
               <li className="flex items-center">
                 <span className="mr-3 text-emerald-600">•</span>
                 <a
-                  href="/languages/curl/"
+                  href="/languages/net/"
                   className="text-emerald-600 underline decoration-emerald-600 underline-offset-2 transition-colors hover:text-emerald-700"
                 >
-                  cURL
+                  .NET / C#
                 </a>
               </li>
               <li className="flex items-center">

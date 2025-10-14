@@ -798,13 +798,100 @@ await new Promise(resolve => setTimeout(resolve, 5000));`,
     ],
   },
   'C#': {
-    installation: 'Coming soon',
-    installCommand: 'text',
+    installation: 'dotnet add package LogBull',
+    installCommand: 'bash',
     integrations: [
       {
-        label: 'Coming Soon',
-        language: 'text',
-        code: 'C# integration is coming soon!\n\nStay tuned for updates.',
+        label: 'LogBull',
+        language: 'csharp',
+        code: `using LogBull;
+using LogBull.Core;
+
+var logger = LogBullLogger.CreateBuilder()
+    .WithProjectId("LOGBULL_PROJECT_ID_PLACEHOLDER")
+    .WithHost("http://LOGBULL_HOST_PLACEHOLDER")
+    .WithApiKey("LOGBULL_API_KEY_PLACEHOLDER") // optional
+    .WithLogLevel(LogLevel.INFO)
+    .Build();
+
+logger.Info("User logged in successfully", new Dictionary<string, object>
+{
+    { "user_id", "12345" },
+    { "username", "john_doe" },
+    { "ip", "192.168.1.100" }
+});
+
+// Context management
+var sessionLogger = logger.WithContext(new Dictionary<string, object>
+{
+    { "session_id", "sess_abc123" },
+    { "user_id", "user_456" }
+});
+
+sessionLogger.Info("Processing request", new Dictionary<string, object>
+{
+    { "action", "purchase" }
+});
+
+// Ensure all logs are sent before exiting
+logger.Flush();
+await Task.Delay(2000);
+logger.Dispose();`,
+      },
+      {
+        label: 'Microsoft.Extensions.Logging',
+        language: 'csharp',
+        code: `using Microsoft.Extensions.Logging;
+using LogBull.Core;
+using LogBull.Extensions;
+
+var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddLogBull(configBuilder =>
+    {
+        configBuilder
+            .WithProjectId("LOGBULL_PROJECT_ID_PLACEHOLDER")
+            .WithHost("http://LOGBULL_HOST_PLACEHOLDER")
+            .WithApiKey("LOGBULL_API_KEY_PLACEHOLDER")
+            .WithLogLevel(LogLevel.INFO);
+    });
+});
+
+var logger = loggerFactory.CreateLogger<MyClass>();
+
+logger.LogInformation("User action: {UserId} performed {Action}", "12345", "login");
+
+logger.LogError("Payment failed: Order {OrderId}, Amount {Amount}", "ord_123", 99.99);`,
+      },
+      {
+        label: 'Serilog',
+        language: 'csharp',
+        code: `using Serilog;
+using LogBull.Core;
+using LogBull.Serilog;
+
+var config = Config.CreateBuilder()
+    .WithProjectId("LOGBULL_PROJECT_ID_PLACEHOLDER")
+    .WithHost("http://LOGBULL_HOST_PLACEHOLDER")
+    .WithApiKey("LOGBULL_API_KEY_PLACEHOLDER")
+    .WithLogLevel(LogLevel.INFO)
+    .Build();
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Sink(new LogBullSink(config))
+    .CreateLogger();
+
+Log.Information("User {UserId} performed action {Action}", "12345", "login");
+
+Log.Error("Payment failed for order {OrderId} with amount {Amount} {Currency}",
+    "ord_123", 99.99, "USD");
+
+// Structured logging with properties
+Log.Information("Request processed {@Request}",
+    new { Method = "POST", Path = "/api/users", StatusCode = 201 });
+
+// Don't forget to flush on application shutdown
+Log.CloseAndFlush();`,
       },
     ],
   },
