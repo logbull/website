@@ -65,13 +65,11 @@ body {
 .dark pre,
 .dark code {
   background-color: white !important;
-  --tw-ring-color: rgb(209, 213, 219) !important;
 }
 
-/* Override ring color for code blocks to light gray */
+/* Override ring with proper inset box-shadow to avoid gaps */
 .dark pre {
-  --tw-ring-opacity: 1 !important;
-  --tw-ring-color: rgb(209, 213, 219) !important;
+  box-shadow: inset 0 0 0 1px rgb(209, 213, 219) !important;
 }
 
 /* Force light syntax highlighting in code blocks */
