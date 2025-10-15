@@ -14,6 +14,7 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: light !important;
 }
 
 body {
@@ -33,6 +34,31 @@ body {
     'Segoe UI Emoji',
     'Segoe UI Symbol',
     'Noto Color Emoji';
+}
+
+/* Override Chrome dark mode text colors */
+.dark,
+[data-theme='dark'] {
+  color-scheme: light !important;
+}
+
+/* Force dark text color even in dark mode contexts */
+.dark *,
+[data-theme='dark'] * {
+  color: var(--foreground) !important;
+}
+
+/* Override specific dark theme text classes */
+.dark .nextra-content,
+.dark article,
+.dark p,
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  color: var(--foreground) !important;
 }
 
 /* Hide Nextra feedback and edit links */
