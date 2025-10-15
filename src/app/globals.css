@@ -61,6 +61,20 @@ body {
   color: var(--foreground) !important;
 }
 
+/* Force light mode on code blocks */
+.dark pre,
+.dark code {
+  background-color: white !important;
+  border-color: rgb(209, 213, 219) !important;
+  --tw-ring-color: rgb(209, 213, 219) !important;
+}
+
+/* Force light syntax highlighting in code blocks */
+.dark pre code span,
+.dark code span {
+  color: var(--shiki-light) !important;
+}
+
 /* Hide Nextra feedback and edit links */
 .nextra-feedback,
 .nextra-edit-page,
