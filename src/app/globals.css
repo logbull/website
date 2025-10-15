@@ -69,6 +69,11 @@ body {
   --tw-ring-color: rgb(209, 213, 219) !important;
 }
 
+.dark pre {
+  border: 1px solid rgb(209, 213, 219) !important;
+  box-shadow: 0 0 0 1px rgb(209, 213, 219) inset !important;
+}
+
 /* Force light syntax highlighting in code blocks */
 .dark pre code span,
 .dark code span {

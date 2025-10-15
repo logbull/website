@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
@@ -1036,6 +1036,40 @@ export function CodeUsageComponent({
   const [copiedInstallation, setCopiedInstallation] = useState(false);
   const [copiedConfiguration, setCopiedConfiguration] = useState(false);
   const [copiedUsage, setCopiedUsage] = useState(false);
+
+  // Handle languageExample URL parameter
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const languageParam = searchParams.get('language_example');
+
+    if (languageParam) {
+      // Map URL parameter to Language type (case-insensitive)
+      const languageMap: Record<string, Language> = {
+        python: 'Python',
+        go: 'Go',
+        golang: 'Go',
+        java: 'Java',
+        php: 'PHP',
+        javascript: 'JavaScript',
+        js: 'JavaScript',
+        typescript: 'JavaScript',
+        ts: 'JavaScript',
+        'c#': 'C#',
+        csharp: 'C#',
+        dotnet: 'C#',
+        ruby: 'Ruby',
+        rust: 'Rust',
+        curl: 'cURL',
+      };
+
+      const normalizedParam = languageParam.toLowerCase();
+      const matchedLanguage = languageMap[normalizedParam];
+
+      if (matchedLanguage) {
+        setSelectedLanguage(matchedLanguage);
+      }
+    }
+  }, []);
 
   const currentConfig = languageConfigs[selectedLanguage];
   const currentIntegration = currentConfig.integrations[selectedIntegration];
