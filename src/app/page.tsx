@@ -204,7 +204,7 @@ export default function HomePage() {
             description:
               "Watch in this short 3 minutes video how to use Log Bull: how to create a project, how to send logs from Python, how to query for logs, how to add team members and what is users' audit logs.",
             thumbnailUrl: 'https://img.youtube.com/vi/8H8jF8nVzJE/maxresdefault.jpg',
-            uploadDate: '2025-10-10',
+            uploadDate: '2025-10-10T00:00:00+00:00',
             duration: 'PT3M',
             contentUrl: 'https://www.youtube.com/watch?v=8H8jF8nVzJE',
             embedUrl: 'https://www.youtube.com/embed/8H8jF8nVzJE',
@@ -232,7 +232,7 @@ export default function HomePage() {
             description:
               'Complete guide showing how to install Log Bull. Learn about all three installation methods: automated script, Docker run command, and Docker Compose setup.',
             thumbnailUrl: 'https://img.youtube.com/vi/39hPU2X3deU/maxresdefault.jpg',
-            uploadDate: '2025-10-10',
+            uploadDate: '2025-10-10T00:00:00+00:00',
             contentUrl: 'https://www.youtube.com/watch?v=39hPU2X3deU',
             embedUrl: 'https://www.youtube.com/embed/39hPU2X3deU',
             publisher: {
