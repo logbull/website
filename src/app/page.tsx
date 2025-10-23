@@ -318,22 +318,35 @@ export default function HomePage() {
               </h1>
 
               <p className="mx-auto max-w-[300px] text-center text-lg sm:max-w-[600px] sm:text-xl">
-                Simple alternative to ELK and Loki. Self-hosted. Open source
+                Write logs in your code via logger and see them in the dashboard with ability to
+                search by text, time, fields, etc. Simple alternative to ELK and Loki. Self-hosted (Docker native).
+                Open source
               </p>
 
-              <div className="mx-auto flex max-w-[600px] flex-col items-center justify-center gap-2 px-4 sm:flex-row sm:gap-4">
+              <div className="mx-auto mb-0 flex max-w-[500px] flex-col items-center justify-center px-4 sm:flex-row sm:gap-2">
                 <a
                   href="#how-to-use-in-code"
-                  className="w-full cursor-pointer rounded-lg border-2 border-emerald-600 bg-emerald-600 px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:border-emerald-700 hover:bg-emerald-700 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
+                  className="w-full mb-2 grow cursor-pointer rounded-lg border-2 border-emerald-600 bg-emerald-600 px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:border-emerald-700 hover:bg-emerald-700 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
                 >
                   How to use in code?
                 </a>
 
                 <a
                   href="#how-to-install"
-                  className="w-full cursor-pointer rounded-lg border-2 border-emerald-600 bg-white px-4 py-2 text-center text-sm font-semibold transition-colors hover:border-emerald-700 hover:bg-emerald-50 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
+                  className="w-full mb-2 grow cursor-pointer rounded-lg border-2 border-emerald-600 bg-white px-4 py-2 text-center text-sm font-semibold transition-colors hover:border-emerald-700 hover:bg-emerald-50 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
                 >
                   How to install Log Bull?
+                </a>
+              </div>
+
+              <div className="mx-auto flex max-w-[500px] flex-col items-center justify-center gap-2 px-4 sm:flex-row sm:gap-4">
+                <a
+                  href="https://app.logbull.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full grow cursor-pointer rounded-lg border-2 border-emerald-600 bg-emerald-600 px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:border-emerald-700 hover:bg-emerald-700 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
+                >
+                  Demo playground
                 </a>
               </div>
             </div>
