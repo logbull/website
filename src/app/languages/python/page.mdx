@@ -37,9 +37,10 @@ logger.info("User logged in successfully", fields={
     "ip": "192.168.1.100"
 })
 
-# Ensure all logs are sent before exiting
+# We need to wait a bit in short-living scripts when logs
+# received by Log Bull. This is not needed in production
 logger.flush()
-time.sleep(5)
+time.sleep(3)
 ```
 
 ## Usage Examples
@@ -83,9 +84,10 @@ debug_logger.debug("Processing user data", fields={
     "user_id": "12345"
 })
 
-# Ensure all logs are sent before exiting
+# We need to wait a bit in short-living scripts when logs
+# received by Log Bull. This is not needed in production
 logger.flush()
-time.sleep(5)  # Wait for logs to be sent
+time.sleep(3)
 ```
 
 #### Context Management
@@ -122,9 +124,10 @@ transaction_logger.info("Transaction completed", fields={
 })
 # Includes all previous context + new transaction context
 
-# Ensure all logs are sent before exiting
+# We need to wait a bit in short-living scripts when logs
+# received by Log Bull. This is not needed in production
 logger.flush()
-time.sleep(5)  # Wait for logs to be sent
+time.sleep(3)
 ```
 
 ### 2. Python Logging Handler

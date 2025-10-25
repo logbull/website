@@ -76,9 +76,10 @@ session_logger.info("Processing request", fields={
     "action": "purchase"
 })
 
-# Ensure all logs are sent before exiting
+# We need to wait a bit in short-living scripts when logs
+# received by Log Bull. This is not needed in production
 logger.flush()
-time.sleep(5)`,
+time.sleep(3)`,
       },
       {
         label: 'logging',
@@ -210,9 +211,10 @@ func main() {
         "ip":       "192.168.1.100",
     })
 
-    // Ensure all logs are sent before exiting
+    // We need to wait a bit in short-living programs when logs
+    // received by Log Bull. This is not needed in production
     logger.Flush()
-    time.Sleep(5 * time.Second)
+    time.Sleep(3 * time.Second)
 }`,
       },
       {
@@ -253,8 +255,10 @@ func main() {
         ),
     )
 
+    // We need to wait a bit in short-living programs when logs
+    // received by Log Bull. This is not needed in production
     handler.Flush()
-    time.Sleep(2 * time.Second) // wait for logs to be sent
+    time.Sleep(3 * time.Second)
 }`,
       },
       {
@@ -294,8 +298,10 @@ func main() {
         zap.String("error", "connection timeout"),
     )
 
+    // We need to wait a bit in short-living programs when logs
+    // received by Log Bull. This is not needed in production
     logger.Sync()
-    time.Sleep(2 * time.Second) // wait for logs to be sent
+    time.Sleep(3 * time.Second)
 }`,
       },
       {
@@ -335,8 +341,10 @@ func main() {
         "amount":   99.99,
     }).Error("Payment failed")
 
+    // We need to wait a bit in short-living programs when logs
+    // received by Log Bull. This is not needed in production
     hook.Flush()
-    time.Sleep(2 * time.Second) // wait for logs to be sent
+    time.Sleep(3 * time.Second)
 }`,
       },
     ],
@@ -496,9 +504,10 @@ public class Application {
                 "action", "purchase"
             ));
 
-            // Ensure all logs are sent before exiting
+            // We need to wait a bit in short-living programs when logs
+            // received by Log Bull. This is not needed in production
             logger.flush();
-            Thread.sleep(5000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
@@ -532,9 +541,10 @@ $logger->info('User logged in successfully', [
     'ip' => '192.168.1.100'
 ]);
 
-// Ensure all logs are sent before exiting
+// We need to wait a bit in short-living scripts when logs
+// received by Log Bull. This is not needed in production
 $logger->flush();
-sleep(2);`,
+sleep(3);`,
       },
       {
         label: 'Monolog',
@@ -561,9 +571,10 @@ $logger->info('User action', [
     'ip' => '192.168.1.100'
 ]);
 
-// Ensure all logs are sent before exiting
+// We need to wait a bit in short-living scripts when logs
+// received by Log Bull. This is not needed in production
 $handler->flush();
-sleep(2);`,
+sleep(3);`,
       },
       {
         label: 'PSR-3',
@@ -586,9 +597,10 @@ $logger->info('API request', [
     'status_code' => 201
 ]);
 
-// Ensure all logs are sent before exiting
+// We need to wait a bit in short-living scripts when logs
+// received by Log Bull. This is not needed in production
 $logger->flush();
-sleep(2);`,
+sleep(3);`,
       },
       {
         label: 'Laravel',
@@ -687,9 +699,10 @@ sessionLogger.info("Processing request", {
   action: "purchase",
 });
 
-// Ensure all logs are sent before exiting
+// We need to wait a bit in short-living scripts when logs
+// received by Log Bull. This is not needed in production
 logger.flush();
-await new Promise(resolve => setTimeout(resolve, 5000));`,
+await new Promise(resolve => setTimeout(resolve, 3000));`,
       },
       {
         label: 'Winston',
@@ -733,9 +746,10 @@ const requestLogger = logger.child({
 requestLogger.info("Request started");
 requestLogger.info("Request completed", { duration_ms: 250 });
 
-// Ensure all logs are sent before exiting
+// We need to wait a bit in short-living scripts when logs
+// received by Log Bull. This is not needed in production
 logger.flush();
-await new Promise(resolve => setTimeout(resolve, 5000));`,
+await new Promise(resolve => setTimeout(resolve, 3000));`,
       },
       {
         label: 'Pino',
@@ -780,9 +794,10 @@ const requestLogger = logger.child({
 requestLogger.info("Request started");
 requestLogger.info({ duration_ms: 250 }, "Request completed");
 
-// Ensure all logs are sent before exiting
+// We need to wait a bit in short-living scripts when logs
+// received by Log Bull. This is not needed in production
 logger.flush();
-await new Promise(resolve => setTimeout(resolve, 5000));`,
+await new Promise(resolve => setTimeout(resolve, 3000));`,
       },
     ],
   },
@@ -833,9 +848,10 @@ sessionLogger.Info("Processing request", new Dictionary<string, object>
     { "action", "purchase" }
 });
 
-// Ensure all logs are sent before exiting
+// We need to wait a bit in short-living programs when logs
+// reach Log Bull. This is not needed in production
 logger.Flush();
-await Task.Delay(2000);
+await Task.Delay(3000);
 logger.Dispose();`,
       },
       {

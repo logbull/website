@@ -76,9 +76,10 @@ public class Application {
                 "ip", "192.168.1.100"
             ));
 
-            // Ensure all logs are sent before exiting
+            // We need to wait a bit in short-living programs when logs
+            // received by Log Bull. This is not needed in production
             logger.flush();
-            Thread.sleep(5000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
@@ -136,11 +137,10 @@ public class BasicExample {
                     "action", "purchase",
                     "amount", 99.99));
 
-            // Ensure all logs are sent
+            // We need to wait a bit in short-living programs when logs
+            // received by Log Bull. This is not needed in production
             logger.flush();
-
-            // Small delay to allow async sending to complete
-            Thread.sleep(2000);
+            Thread.sleep(3000);
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -198,6 +198,13 @@ public class ContextExample {
             ));
             // Includes all previous context + new transaction context
 
+            // We need to wait a bit in short-living programs when logs
+            // received by Log Bull. This is not needed in production
+            logger.flush();
+            Thread.sleep(3000);
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         } finally {
             logger.shutdown();
         }
@@ -352,9 +359,9 @@ public class LogbackExample {
                 logger.error("An error occurred", e);
             }
 
-            // Small delay to allow async sending to complete
-            Thread.sleep(2000);
-
+            // We need to wait a bit in short-living programs when logs
+            // received by Log Bull. This is not needed in production
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

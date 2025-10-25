@@ -318,7 +318,7 @@ export default function HomePage() {
               </h1>
 
               <p className="mx-auto max-w-[300px] text-center text-lg sm:max-w-[600px] sm:text-xl">
-                Write logs in your code via logger and see them in the dashboard with ability to
+                Collect logs from your code via logger and see them in the dashboard with ability to
                 search by text, time, fields, etc. Simple alternative to ELK and Loki. Self-hosted (Docker native).
                 Open source
               </p>
