@@ -319,21 +319,21 @@ export default function HomePage() {
 
               <p className="mx-auto max-w-[300px] text-center text-lg sm:max-w-[600px] sm:text-xl">
                 Collect logs from your code via logger and see them in the dashboard with ability to
-                search by text, time, fields, etc. Simple alternative to ELK and Loki. Self-hosted (Docker native).
-                Open source
+                search by text, time, fields, etc. Simple alternative to ELK and Loki. Self-hosted
+                (Docker native). Open source
               </p>
 
               <div className="mx-auto mb-0 flex max-w-[500px] flex-col items-center justify-center px-4 sm:flex-row sm:gap-2">
                 <a
                   href="#how-to-use-in-code"
-                  className="w-full mb-2 grow cursor-pointer rounded-lg border-2 border-emerald-600 bg-emerald-600 px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:border-emerald-700 hover:bg-emerald-700 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
+                  className="mb-2 w-full grow cursor-pointer rounded-lg border-2 border-emerald-600 bg-emerald-600 px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:border-emerald-700 hover:bg-emerald-700 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
                 >
                   How to use in code?
                 </a>
 
                 <a
                   href="#how-to-install"
-                  className="w-full mb-2 grow cursor-pointer rounded-lg border-2 border-emerald-600 bg-white px-4 py-2 text-center text-sm font-semibold transition-colors hover:border-emerald-700 hover:bg-emerald-50 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
+                  className="mb-2 w-full grow cursor-pointer rounded-lg border-2 border-emerald-600 bg-white px-4 py-2 text-center text-sm font-semibold transition-colors hover:border-emerald-700 hover:bg-emerald-50 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
                 >
                   How to install Log Bull?
                 </a>
@@ -986,6 +986,10 @@ export default function HomePage() {
                 className="transition-colors hover:text-emerald-200"
               >
                 Contact developer
+              </a>
+
+              <a href="/privacy/" className="transition-colors hover:text-emerald-200">
+                Privacy Policy
               </a>
             </div>
             <p className="text-center text-sm text-white">
