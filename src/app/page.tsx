@@ -346,7 +346,7 @@ export default function HomePage() {
                   rel="noopener noreferrer"
                   className="w-full grow cursor-pointer rounded-lg border-2 border-emerald-600 bg-emerald-600 px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:border-emerald-700 hover:bg-emerald-700 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
                 >
-                  Demo playground
+                  Playground
                 </a>
               </div>
             </div>
