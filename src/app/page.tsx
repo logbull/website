@@ -338,17 +338,6 @@ export default function HomePage() {
                   How to install Log Bull?
                 </a>
               </div>
-
-              <div className="mx-auto flex max-w-[500px] flex-col items-center justify-center gap-2 px-4 sm:flex-row sm:gap-4">
-                <a
-                  href="https://app.logbull.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full grow cursor-pointer rounded-lg border-2 border-emerald-600 bg-emerald-600 px-4 py-2 text-center text-sm font-semibold text-white transition-colors hover:border-emerald-700 hover:bg-emerald-700 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
-                >
-                  Playground
-                </a>
-              </div>
             </div>
           </main>
 
